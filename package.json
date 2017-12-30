@@ -1,0 +1,32 @@
+{
+	"name": "disthings",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node node_modules/react-native/local-cli/cli.js start",
+		"test": "jest"
+	},
+	"dependencies": {
+		"react": "16.0.0-alpha.12",
+		"react-native": "0.48",
+		"react-native-root-toast": "^2.2.1",
+		"react-native-sensors": "^2.4.2",
+		"react-native-sqlite-2": "^1.5.0"
+	},
+	"devDependencies": {
+		"@types/jest": "^21.1.8",
+		"@types/node": "^8.0.58",
+		"@types/react": "^16.0.23",
+		"@types/react-native": "^0.51.2",
+		"@types/react-test-renderer": "^16.0.0",
+		"babel-jest": "21.2.0",
+		"babel-preset-react-native": "4.0.0",
+		"jest": "21.2.1",
+		"react-test-renderer": "16.0.0-alpha.12",
+		"sqlite3": "^3.1.13",
+		"sqlite3-transactions": "0.0.5"
+	},
+	"jest": {
+		"preset": "react-native"
+	}
+}

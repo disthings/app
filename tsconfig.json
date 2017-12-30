@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+	"module": "commonjs",
+	"target": "es6",
+	"sourceMap": true,
+	"jsx": "react",
+	"noImplicitAny": true,
+	"alwaysStrict": true,
+	"forceConsistentCasingInFileNames": true,
+	"noImplicitReturns": true,
+	"noImplicitThis": true,
+	"noUnusedLocals": true,
+	"noUnusedParameters": true,
+	"removeComments": true,
+	"strictNullChecks": true,
+	"allowJs": true,
+	"skipLibCheck": true
+  },
+  "include": [
+	"./src"
+  ],
+  "exclude": [
+	"./node_modules"
+  ]
+}
