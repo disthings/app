@@ -19,20 +19,12 @@ export class SyncManager implements iSyncManager {
 			"onSocketReconnect": []
 		};
 
-		if(!global) {
-			SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
-				this.settings = result.webSocket;
-				this.webSocketAddress = this.settings.host + ":" + this.settings.port + this.settings.path;
-				this.webSocketReconnectionInterval = this.settings.reconnectionInterval;
-				this.tryToConnect();
-			});
-		}
-		else {
-			this.settings = SettingsManager.getStartingSettings().webSocket;
-			this.webSocketAddress = "192.168.1.101" + ":" + this.settings.port + this.settings.path;
+		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
+			this.settings = result.webSocket;
+			this.webSocketAddress = this.settings.host + ":" + this.settings.port + this.settings.path;
 			this.webSocketReconnectionInterval = this.settings.reconnectionInterval;
 			this.tryToConnect();
-		}
+		});
 	}
 
 	private activateSocketListeners(): void {
@@ -56,6 +48,7 @@ export class SyncManager implements iSyncManager {
 	}
 
 	sendMessage(message: Message): void {
+		message.id = "APP";
 		this.webSocket.send(JSON.stringify(message));
 	}
 
@@ -75,10 +68,16 @@ export class SyncManager implements iSyncManager {
 	}
 
 	private informMessageSubscribers(message: Message): void {
-		const subscribers: Array<Subscriber> = this.incomingMessageSubscribers[message.type];
-		subscribers.forEach((subscriber: Subscriber) => {
-			subscriber.callback(message);
-		});
+		console.log(message.id);
+		const subscribers: Array<Subscriber> = this.getIncomingMessageSubscribers(message.type);
+		if(message.type === "Error: Illegal message received") {
+			console.warn(message.type);
+		}
+		else {
+			subscribers.forEach((subscriber: Subscriber) => {
+				subscriber.callback(message);
+			});
+		}
 	}
 
 	private informOnSocketReady(): void {
@@ -91,6 +90,14 @@ export class SyncManager implements iSyncManager {
 		this.incomingMessageSubscribers.onSocketDisconnect.forEach((subscriber: Subscriber) => {
 			subscriber.callback();
 		});
+	}
+
+	private getIncomingMessageSubscribers(messageType: string): Array<Subscriber> {
+		let subscribers: Array<Subscriber> = this.incomingMessageSubscribers[messageType];
+		if(!subscribers) {
+			subscribers = [];
+		}
+		return subscribers;
 	}
 
 	private tryToConnect(): void {

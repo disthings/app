@@ -1,4 +1,5 @@
-"use strict";
+f40d3ad41f2b6d1a4c30317f96164ae8
+'use strict';require('ts-jest').install();"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const WebSocketNode = require("ws");
 const ipAddress = "192.168.1.101";

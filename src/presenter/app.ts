@@ -276,9 +276,9 @@ export class App implements iApp {
 		}, this.subscriberID);
 	}
 
-	private sendClientPeripheralsData(receivedMessage: Message): void {
+	private sendClientPeripheralsData(_receivedMessage: Message): void {
 
-		this.getClientAllPeripheralsViewData(receivedMessage, (data: any) => {
+		this.getClientAllPeripheralsViewData((data: any) => {
 			const message: Message = {
 				"type": "clientAllPeripheralsData",
 				"data": data
@@ -309,14 +309,16 @@ export class App implements iApp {
 		});
 	}
 
-	private getClientAllPeripheralsViewData(message: Message, callback: Function): void {
+	private getClientAllPeripheralsViewData(callback: Function): void {
 
 		const responseDataPackages: Array<ResponseDataPackage> = [];
-		const receivedDataPackages: Array<RequestDataPackage> = message.data;
-		forEachAsync(receivedDataPackages, (receivedDataPackage: RequestDataPackage, _indexOrKey: number | string, next: () => void) => {
-			let peripheralName: string = receivedDataPackage.name;
-			let peripheral: Peripheral = this.getClientPeripheralFromName(peripheralName);
+		const clientPeripherals: Array<PeripheralPartsContainer> = this.getClientPeripherals();
 
+
+		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer, _indexOrKey: number | string, next: () => void) => {
+
+			let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
+			let peripheralName: string = peripheral.getName();
 			let db: iSQLiteDatabase = this.dataManager.getDatabase(peripheralName);
 			db.transaction((transaction: iTransaction) => {
 
@@ -354,10 +356,10 @@ export class App implements iApp {
 		});
 	}
 
-	private getClientPeripheralFromName(name: string): Peripheral {
-		const peripheralContainer: PeripheralPartsContainer = this.getPeripheralPartsContainerFromName(name, PeripheralType.CLIENT);
-		return peripheralContainer.peripheral as Peripheral;
-	}
+	// private getClientPeripheralFromName(name: string): Peripheral {
+	// 	const peripheralContainer: PeripheralPartsContainer = this.getPeripheralPartsContainerFromName(name, PeripheralType.CLIENT);
+	// 	return peripheralContainer.peripheral as Peripheral;
+	// }
 
 	private getPeripheralPartsContainerFromName(name: string, peripheralType: PeripheralType): PeripheralPartsContainer {
 		let found: boolean = false;
