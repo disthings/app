@@ -1,0 +1,56 @@
+425f146238aae380912ccba50cd505c6
+'use strict';require('ts-jest').install();"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const WebSocketNode = require("ws");
+const ws = new WebSocketNode("http://192.168.1.101:1880/peripherals");
+let count = 0;
+test("testServerMessages", (done) => {
+    ws.on("open", () => {
+        ws.on("message", (m) => {
+            let parsedMessage = JSON.parse(m);
+            if (parsedMessage.type === "clientAllPeripheralsDataReceived" && parsedMessage.data) {
+                closeSocket(done);
+            }
+            if (parsedMessage.type === "serverAllPeripheralsData" && parsedMessage.data) {
+                closeSocket(done);
+            }
+            if (parsedMessage.type === "serverPeripheralData" && parsedMessage.data) {
+                closeSocket(done);
+            }
+            if (parsedMessage.type === "getClientAllPeripheralsData" && parsedMessage.data) {
+                closeSocket(done);
+            }
+            if (parsedMessage.type === "Error: No legal incoming message" && !parsedMessage.data) {
+                closeSocket(done);
+            }
+        });
+        ws.send(JSON.stringify({
+            type: "getServerAllPeripheralsData",
+            data: []
+        }));
+        ws.send(JSON.stringify({
+            type: "clientAllPeripheralsData",
+            data: []
+        }));
+        ws.send(JSON.stringify({
+            type: "getServerPeripheralData",
+            data: []
+        }));
+        ws.send(JSON.stringify({
+            type: "serverAllPeripheralsDataReceived",
+            data: []
+        }));
+        ws.send(JSON.stringify({
+            type: "RANDOM_MESSAGE",
+            data: []
+        }));
+    });
+});
+function closeSocket(done) {
+    count++;
+    if (count === 5) {
+        ws.close();
+        done();
+    }
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYmFja2VuZC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImJhY2tlbmQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFFQSxNQUFNLGFBQWEsR0FBUSxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUM7QUFFekMsTUFBTSxFQUFFLEdBQVEsSUFBSSxhQUFhLENBQUMsdUNBQXVDLENBQUMsQ0FBQztBQUMzRSxJQUFJLEtBQUssR0FBVyxDQUFDLENBQUM7QUFHdEIsSUFBSSxDQUFDLG9CQUFvQixFQUFFLENBQUMsSUFBYyxFQUFFLEVBQUU7SUFFN0MsRUFBRSxDQUFDLEVBQUUsQ0FBQyxNQUFNLEVBQUUsR0FBRyxFQUFFO1FBQ2xCLEVBQUUsQ0FBQyxFQUFFLENBQUMsU0FBUyxFQUFFLENBQUMsQ0FBUyxFQUFFLEVBQUU7WUFDOUIsSUFBSSxhQUFhLEdBQVksSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQztZQUUzQyxFQUFFLENBQUMsQ0FBQyxhQUFhLENBQUMsSUFBSSxLQUFLLGtDQUFrQyxJQUFJLGFBQWEsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDO2dCQUNyRixXQUFXLENBQUMsSUFBSSxDQUFDLENBQUM7WUFDbkIsQ0FBQztZQUNELEVBQUUsQ0FBQyxDQUFDLGFBQWEsQ0FBQyxJQUFJLEtBQUssMEJBQTBCLElBQUksYUFBYSxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUM7Z0JBQzdFLFdBQVcsQ0FBQyxJQUFJLENBQUMsQ0FBQztZQUNuQixDQUFDO1lBQ0QsRUFBRSxDQUFBLENBQUMsYUFBYSxDQUFDLElBQUksS0FBSyxzQkFBc0IsSUFBSSxhQUFhLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQztnQkFDeEUsV0FBVyxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ25CLENBQUM7WUFDRCxFQUFFLENBQUEsQ0FBQyxhQUFhLENBQUMsSUFBSSxLQUFLLDZCQUE2QixJQUFJLGFBQWEsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDO2dCQUMvRSxXQUFXLENBQUMsSUFBSSxDQUFDLENBQUM7WUFDbkIsQ0FBQztZQUNELEVBQUUsQ0FBQSxDQUFDLGFBQWEsQ0FBQyxJQUFJLEtBQUssa0NBQWtDLElBQUksQ0FBQyxhQUFhLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQztnQkFDckYsV0FBVyxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ25CLENBQUM7UUFDRixDQUFDLENBQUMsQ0FBQztRQUVILEVBQUUsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLFNBQVMsQ0FBQztZQUN0QixJQUFJLEVBQUUsNkJBQTZCO1lBQ25DLElBQUksRUFBRSxFQUFFO1NBQ1IsQ0FBQyxDQUFDLENBQUM7UUFFSixFQUFFLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxTQUFTLENBQUM7WUFDdEIsSUFBSSxFQUFFLDBCQUEwQjtZQUNoQyxJQUFJLEVBQUUsRUFBRTtTQUNSLENBQUMsQ0FBQyxDQUFDO1FBRUosRUFBRSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDO1lBQ3RCLElBQUksRUFBRSx5QkFBeUI7WUFDL0IsSUFBSSxFQUFFLEVBQUU7U0FDUixDQUFDLENBQUMsQ0FBQztRQUVKLEVBQUUsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLFNBQVMsQ0FBQztZQUN0QixJQUFJLEVBQUUsa0NBQWtDO1lBQ3hDLElBQUksRUFBRSxFQUFFO1NBQ1IsQ0FBQyxDQUFDLENBQUM7UUFFSixFQUFFLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxTQUFTLENBQUM7WUFDdEIsSUFBSSxFQUFFLGdCQUFnQjtZQUN0QixJQUFJLEVBQUUsRUFBRTtTQUNSLENBQUMsQ0FBQyxDQUFDO0lBQ0wsQ0FBQyxDQUFDLENBQUM7QUFDSixDQUFDLENBQUMsQ0FBQztBQUVILHFCQUFxQixJQUFjO0lBQ2xDLEtBQUssRUFBRSxDQUFDO0lBQ1IsRUFBRSxDQUFDLENBQUMsS0FBSyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUM7UUFDakIsRUFBRSxDQUFDLEtBQUssRUFBRSxDQUFDO1FBQ1gsSUFBSSxFQUFFLENBQUM7SUFDUixDQUFDO0FBQ0YsQ0FBQyJ9

@@ -19,12 +19,20 @@ export class SyncManager implements iSyncManager {
 			"onSocketReconnect": []
 		};
 
-		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
-			this.settings = result.webSocket;
-			this.webSocketAddress = this.settings.host + ":" + this.settings.port + this.settings.path;
+		if(!global) {
+			SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
+				this.settings = result.webSocket;
+				this.webSocketAddress = this.settings.host + ":" + this.settings.port + this.settings.path;
+				this.webSocketReconnectionInterval = this.settings.reconnectionInterval;
+				this.tryToConnect();
+			});
+		}
+		else {
+			this.settings = SettingsManager.getStartingSettings().webSocket;
+			this.webSocketAddress = "192.168.1.101" + ":" + this.settings.port + this.settings.path;
 			this.webSocketReconnectionInterval = this.settings.reconnectionInterval;
 			this.tryToConnect();
-		});
+		}
 	}
 
 	private activateSocketListeners(): void {
