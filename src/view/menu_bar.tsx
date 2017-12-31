@@ -58,8 +58,7 @@ const style: any = StyleSheet.create({
 	selectedButtonText: {
 		fontWeight: "bold",
 		alignSelf: "center",
-		margin: 10,
-		textDecorationLine: "underline"
+		margin: 10
 	},
 	text: {
 		alignSelf: "center",

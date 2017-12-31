@@ -48,7 +48,6 @@ export class SyncManager implements iSyncManager {
 	}
 
 	sendMessage(message: Message): void {
-		message.id = "APP";
 		this.webSocket.send(JSON.stringify(message));
 	}
 
@@ -68,7 +67,6 @@ export class SyncManager implements iSyncManager {
 	}
 
 	private informMessageSubscribers(message: Message): void {
-		console.log(message.id);
 		const subscribers: Array<Subscriber> = this.getIncomingMessageSubscribers(message.type);
 		if(message.type === "Error: Illegal message received") {
 			console.warn(message.type);
