@@ -5,17 +5,17 @@ import {iDataManager} from "../../src/model/i_data_manager";
 import {DataManager} from "../model/data_manager";
 import {
 	DataSet, PeripheralPartsContainer, PeripheralType, RequestDataPackage,
-	ResponseDataPackage, Settings, ViewType, Message, QueryResultCallback, UserDataStructure
+	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import {forEachAsync} from "../../src/forEachAsync";
-import {iTransaction} from "../../src/model/i_transaction";
 import {Logger} from "../../src/logger";
 import Timer = NodeJS.Timer;
 import {DefaultValues} from "../../src/defaults/default_values";
 import {Peripheral} from "../../src/model/peripheral";
 import {SettingsManager} from "../model/settings_manager";
 import {StartingSettings} from "../../src/starting_settings";
+import {iTransaction} from "../model/i_transaction";
 
 export class App implements iApp {
 
@@ -54,7 +54,7 @@ export class App implements iApp {
 			else {
 				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.setRuntimeSettings(this.settings, (_error: Error) => {
-					Logger.log(_error);
+					Logger.log("App_constructor", _error);
 				});
 			}
 
@@ -184,11 +184,15 @@ export class App implements iApp {
 
 		db.transaction((transaction: iTransaction) => {
 
-			this.dataManager.createDbTables(peripheral, transaction, (_transaction: iTransaction, _result: any) => {
+			this.dataManager.createDbTables(peripheral, transaction, () => {
 				this.stopWaitingForServer();
 			});
+
+			transaction.commit((error: Error) => {
+				Logger.error("addClientPeripheral 1", error);
+			});
 		}, (error: Error) => {
-			Logger.error(error);
+			Logger.error("addClientPeripheral 2", error);
 		});
 	}
 
@@ -227,7 +231,7 @@ export class App implements iApp {
 		}
 
 		this.dataManager.closeDatabase(peripheral.getName(), (error: Error) => {
-			Logger.error(error);
+			Logger.error("removePeripheral", error);
 		});
 	}
 
@@ -331,13 +335,16 @@ export class App implements iApp {
 						"dataSet": DataSet.VIEW
 					});
 
-					this.dataManager.emptyDataTable(peripheral, transaction, (_transaction: iTransaction, _result: any) => {
+					this.dataManager.emptyDataTable(peripheral, transaction, () => {
+						transaction.commit((error: Error) => {
+							Logger.error("getClientAllPeripheralsViewData 1", error);
+						});
 						next();
 					});
 				});
 
 			}, (error: Error) => {
-				Logger.error("getClientAllPeripheralsViewData", error);
+				Logger.error("getClientAllPeripheralsViewData 2", error);
 			});
 		},() => {
 			callback(responseDataPackages);
@@ -450,8 +457,10 @@ export class App implements iApp {
 
 							if (result) {
 								peripheral.setData(peripheral.getData().concat(result));
-								this.dataManager.emptyBackupTable(peripheral, backupTransaction, (_transaction: iTransaction, _result: QueryResultCallback) => {
-									// todo
+								this.dataManager.emptyBackupTable(peripheral, backupTransaction, () => {
+									backupTransaction.commit((error: Error) => {
+										console.log("setAppState 1", error);
+									});
 								});
 							}
 						});
@@ -459,13 +468,15 @@ export class App implements iApp {
 				else {
 					// todo peripheral and peripheral.getData()
 					this.dataManager.insertDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction,
-						(_transaction: iTransaction, _results: any) => {
-
+						() => {
+							backupTransaction.commit((error: Error) => {
+								console.log("setAppState 2", error);
+							});
 							peripheral.initializeData();
 						});
 				}
 			}, (error: Error) => {
-				console.log(error);
+				console.log("setAppState 3", error);
 			});
 		});
 	}

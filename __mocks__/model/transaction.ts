@@ -1,8 +1,7 @@
 import {ErrorCallback} from "../../src/types";
 import {iTransaction} from "./i_transaction";
-import {iTransactionInternal} from "../../src/model/i_transaction_internal";
 
-export class Transaction implements iTransaction, iTransactionInternal {
+export class Transaction implements iTransaction {
 
 	private sqLiteDb: any;
 	private transaction: any;
@@ -15,7 +14,7 @@ export class Transaction implements iTransaction, iTransactionInternal {
 
 		this.sqLiteDb.beginTransaction((error: Error, transaction: any) => {
 			if(error) {
-				throw error;
+				console.log("Transaction constructor", error);
 			}
 			this.transaction = transaction;
 			this.onTransactionStartCallback(this);
@@ -23,17 +22,11 @@ export class Transaction implements iTransaction, iTransactionInternal {
 	}
 
 	executeSql(sqlStatement: string, args: Array<any>, callback: Function): void {
-		this.transaction.run(sqlStatement, args, (error: Error) => {
-			if(error) {
-				callback(error);
-			}
-			this.transaction.commit((error: Error) => {
-				if(error) {
-					callback(error);
-				}
-				callback();
-			});
-		});
+		this.transaction.run(sqlStatement, args, callback);
+	}
+
+	commit(callback: ErrorCallback): void {
+		this.transaction.commit(callback);
 	}
 
 	onTransactionStart(callback: Function): void {

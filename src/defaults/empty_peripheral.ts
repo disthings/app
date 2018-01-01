@@ -1,72 +1,64 @@
 import {iClientPeripheral} from "../model/i_client_peripheral";
 import {iTransaction} from "../model/i_transaction";
-import {PeripheralType, QueryResultCallback, RequestDataPackage, UserDataStructure} from "../types";
+import {DataSet, PeripheralType, QueryResultCallback, RequestDataPackage, UserDataStructure} from "../types";
 import {iServerPeripheral} from "../model/i_server_peripheral";
-import {DefaultValues} from "./default_values";
 import {Peripheral} from "../model/peripheral";
+import {Logger} from "../logger";
 
 export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iServerPeripheral {
 
+	constructor(name: string, type: PeripheralType) {
+		super(name, type);
+		Logger.warn("You created an EmptyPeripheral named: " + name + ". Please check the class for more information.");
+	}
 
 	getOldData(): UserDataStructure {
 		return {};
 	}
 
 	emptyDataTable(_transaction: iTransaction, _callback: QueryResultCallback): void {
-		console.error("You are using the default implementation EmptyPeripheral. Please read the comments in the class.");
 		return;
 	}
 
 	createDbTables(_transaction: iTransaction, _callback: QueryResultCallback): void {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
 		return;
 	}
 
 	readPeripheralData(): void {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
 		return;
 	}
 
 	getTileData(): any {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
 		return {};
 	}
 
 	getViewData(): any {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
 		return {};
 	}
 
 	getSettingsData(): any {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
 		return {};
 	}
 
-	getName(): string {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
-		return "";
-	}
-
-	getType(): PeripheralType {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
-		return PeripheralType.EMPTY;
-	}
-
 	removeOldData(): void {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
 		return;
 	}
 
 	getRequestDataPackage(): RequestDataPackage {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
-		return DefaultValues.REQUEST_DATA_PACKAGE;
+		return {
+			name: "EmptyPeripheral",
+			timestamp: -1,
+			data: {},
+			peripheralType: PeripheralType.EMPTY,
+			dataSet: DataSet.NONE
+		};
 	}
 
 	deleteOldDataFromMemory(): void {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
+		return;
 	}
 
 	initializeData(): void {
-		console.error("You are using a default implementation of Peripheral, EmptyPeripheral. Please read the comments in the class.");
+		return;
 	}
 }

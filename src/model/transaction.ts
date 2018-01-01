@@ -1,8 +1,7 @@
 import {ErrorCallback, QueryResultCallback} from "../types";
 import {iTransaction} from "./i_transaction";
-import {iTransactionInternal} from "./i_transaction_internal";
 
-export class Transaction implements iTransaction, iTransactionInternal {
+export class Transaction implements iTransaction {
 
 	private sqLiteDb: any;
 	private transaction: any;

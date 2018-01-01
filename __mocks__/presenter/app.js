@@ -24,7 +24,7 @@ class App {
             else {
                 this.settings = settings_manager_1.SettingsManager.getStartingSettings();
                 settings_manager_1.SettingsManager.setRuntimeSettings(this.settings, (_error) => {
-                    logger_1.Logger.log(_error);
+                    logger_1.Logger.log("App_constructor", _error);
                 });
             }
             this.maxTryCounter = this.settings.maxTryCounter;
@@ -129,11 +129,14 @@ class App {
         this.dataManager.addClientPeripheral(peripheralPartsContainer);
         const db = this.dataManager.createDatabase(peripheral.getName());
         db.transaction((transaction) => {
-            this.dataManager.createDbTables(peripheral, transaction, (_transaction, _result) => {
+            this.dataManager.createDbTables(peripheral, transaction, () => {
                 this.stopWaitingForServer();
             });
+            transaction.commit((error) => {
+                logger_1.Logger.error("addClientPeripheral 1", error);
+            });
         }, (error) => {
-            logger_1.Logger.error(error);
+            logger_1.Logger.error("addClientPeripheral 2", error);
         });
     }
     addServerPeripheral(peripheralPartsContainer) {
@@ -163,7 +166,7 @@ class App {
             i++;
         }
         this.dataManager.closeDatabase(peripheral.getName(), (error) => {
-            logger_1.Logger.error(error);
+            logger_1.Logger.error("removePeripheral", error);
         });
     }
     getArrayBasedOnPeripheralType(peripheralType) {
@@ -245,12 +248,15 @@ class App {
                         "peripheralType": types_1.PeripheralType.CLIENT,
                         "dataSet": types_1.DataSet.VIEW
                     });
-                    this.dataManager.emptyDataTable(peripheral, transaction, (_transaction, _result) => {
+                    this.dataManager.emptyDataTable(peripheral, transaction, () => {
+                        transaction.commit((error) => {
+                            logger_1.Logger.error("getClientAllPeripheralsViewData 1", error);
+                        });
                         next();
                     });
                 });
             }, (error) => {
-                logger_1.Logger.error("getClientAllPeripheralsViewData", error);
+                logger_1.Logger.error("getClientAllPeripheralsViewData 2", error);
             });
         }, () => {
             callback(responseDataPackages);
@@ -338,18 +344,24 @@ class App {
                     this.dataManager.restoreAllDataFromBackupTable(peripheral, backupTransaction, (backupTransaction, result) => {
                         if (result) {
                             peripheral.setData(peripheral.getData().concat(result));
-                            this.dataManager.emptyBackupTable(peripheral, backupTransaction, (_transaction, _result) => {
+                            this.dataManager.emptyBackupTable(peripheral, backupTransaction, () => {
+                                backupTransaction.commit((error) => {
+                                    console.log("setAppState 1", error);
+                                });
                             });
                         }
                     });
                 }
                 else {
-                    this.dataManager.insertDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction, (_transaction, _results) => {
+                    this.dataManager.insertDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction, () => {
+                        backupTransaction.commit((error) => {
+                            console.log("setAppState 2", error);
+                        });
                         peripheral.initializeData();
                     });
                 }
             }, (error) => {
-                console.log(error);
+                console.log("setAppState 3", error);
             });
         });
     }

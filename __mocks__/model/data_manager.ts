@@ -4,10 +4,11 @@ import {
 	QueryResultCallback, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
-import {iTransaction} from "./i_transaction";
 import {SettingsManager} from "./settings_manager";
 import {Peripheral} from "../../src/model/peripheral";
 import {SQLiteDatabase} from "./sqlite_database";
+import {iTransaction} from "./i_transaction";
+import {Logger} from "../../src/logger";
 
 export class DataManager implements iDataManager {
 
@@ -41,7 +42,7 @@ export class DataManager implements iDataManager {
 					});
 
 				}, (error: Error) => {
-					throw error;
+					Logger.error("activateDataRetentionInterval", error);
 				});
 			});
 		}, this.dataRetentionInterval);
@@ -56,7 +57,7 @@ export class DataManager implements iDataManager {
 			this.databases.set(name, new SQLiteDatabase(name));
 		}
 		else {
-			throw new Error("Database name already exists");
+			Logger.error(new Error("Database name already exists"));
 		}
 
 		return this.getDatabase(name);
@@ -64,14 +65,14 @@ export class DataManager implements iDataManager {
 
 	getDatabase(name: string): iSQLiteDatabase {
 		if(!this.doesDatabaseExist(name)) {
-			throw new Error("Database does not exist");
+			Logger.error(new Error("Database does not exist"));
 		}
 		return this.databases.get(name) as iSQLiteDatabase;
 	}
 
 	closeDatabase(name: string, errorCallback: ErrorCallback): void {
 		if(!this.doesDatabaseExist(name)) {
-			throw new Error("Database does not exist");
+			Logger.error(new Error("Database does not exist"));
 		}
 		this.getDatabase(name).close(errorCallback);
 	}
@@ -106,19 +107,24 @@ export class DataManager implements iDataManager {
 				this.serverPeripherals.push(peripheralPartsContainer);
 			}
 			else {
-				throw new Error("Invalid peripheral type: " + type);
+				Logger.error(new Error("Invalid peripheral type: " + type));
 			}
 		}
 		else {
-			throw new Error("Duplicate peripheral name: " + name);
+			Logger.error(new Error("Duplicate peripheral name: " + name));
 		}
 	}
 
 	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + DatabaseTable.DATA + "' (dataPackage BLOB);", [],
-			() => {
-				transaction.executeSql("CREATE TABLE '" + peripheral.getName() +  "_" + DatabaseTable.BACKUP + "' (dataPackage BLOB);", [], callback);
-			});
+			(error: Error) => {
+				console.log("createDbTables1", error);
+		});
+		transaction.executeSql("CREATE TABLE '" + peripheral.getName() +  "_" + DatabaseTable.BACKUP + "' (dataPackage BLOB);", [],
+			(error: Error) => {
+				console.log("createDbTables2", error);
+		});
+		callback();
 	}
 
 	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
@@ -140,7 +146,10 @@ export class DataManager implements iDataManager {
 
 		if(values !== "") {
 			let query: string = "INSERT INTO '" + peripheral.getName() +  "_" + table + "' (dataPackage) VALUES ('" + values + "');";
-			transaction.executeSql(query, [], callback);
+			transaction.executeSql(query, [], (error: Error) => {
+				Logger.error("insertDataIntoDb", error);
+			});
+			callback();
 		}
 		else {
 			callback(new Error("No values to enter"));
@@ -177,11 +186,17 @@ export class DataManager implements iDataManager {
 
 	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_DATA" +"';";
-		transaction.executeSql(query, [], callback);
+		transaction.executeSql(query, [], (error: Error) => {
+			Logger.error("emptyDataTable", error);
+		});
+		callback();
 	}
 
 	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_BACKUP" +"';";
-		transaction.executeSql(query, [], callback);
+		transaction.executeSql(query, [], (error: Error) => {
+			Logger.error("emptyBackupTable", error);
+		});
+		callback();
 	}
 }

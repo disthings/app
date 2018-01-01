@@ -5,24 +5,17 @@ class Transaction {
         this.sqLiteDb = sqLiteDb;
         this.sqLiteDb.beginTransaction((error, transaction) => {
             if (error) {
-                throw error;
+                console.log("Transaction constructor", error);
             }
             this.transaction = transaction;
             this.onTransactionStartCallback(this);
         }, this.onTransactionErrorCallback);
     }
     executeSql(sqlStatement, args, callback) {
-        this.transaction.run(sqlStatement, args, (error) => {
-            if (error) {
-                callback(error);
-            }
-            this.transaction.commit((error) => {
-                if (error) {
-                    callback(error);
-                }
-                callback();
-            });
-        });
+        this.transaction.run(sqlStatement, args, callback);
+    }
+    commit(callback) {
+        this.transaction.commit(callback);
     }
     onTransactionStart(callback) {
         this.onTransactionStartCallback = callback;

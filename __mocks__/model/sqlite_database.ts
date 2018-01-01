@@ -3,7 +3,7 @@ const SQLiteInstance: any = require("sqlite3").verbose();
 const TransactionDatabase: any = require("sqlite3-transactions").TransactionDatabase;
 import {ErrorCallback, TransactionCallback} from "../../src/types";
 import {Transaction} from "./transaction";
-import {iTransactionInternal} from "../../src/model/i_transaction_internal";
+import {iTransaction} from "./i_transaction";
 
 export class SQLiteDatabase implements iSQLiteDatabase {
 
@@ -11,7 +11,7 @@ export class SQLiteDatabase implements iSQLiteDatabase {
 	private name: string;
 
 	constructor(name: string) {
-		this.name =name;
+		this.name = name;
 		this.sqLiteDb = new TransactionDatabase(new SQLiteInstance.Database("__mocks__\\" + name + ".sqlite3"));
 	}
 
@@ -20,7 +20,7 @@ export class SQLiteDatabase implements iSQLiteDatabase {
 	}
 
 	transaction(callback: TransactionCallback, errorCallback: ErrorCallback): void {
-		const transaction: iTransactionInternal = new Transaction(this.sqLiteDb);
+		const transaction: iTransaction = new Transaction(this.sqLiteDb);
 		transaction.onTransactionStart(callback);
 		transaction.onTransactionError(errorCallback);
 	}

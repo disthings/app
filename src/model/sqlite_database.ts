@@ -2,7 +2,7 @@ import {iSQLiteDatabase} from "./i_sqlite_database";
 import {SQLiteInstance} from "../js_to_typescript_adapters/react-native-sqlite-2";
 import {ErrorCallback, TransactionCallback} from "../types";
 import {Transaction} from "./transaction";
-import {iTransactionInternal} from "./i_transaction_internal";
+import {iTransaction} from "./i_transaction";
 
 export class SQLiteDatabase implements iSQLiteDatabase {
 
@@ -22,7 +22,7 @@ export class SQLiteDatabase implements iSQLiteDatabase {
 	}
 
 	transaction(callback: TransactionCallback, errorCallback: ErrorCallback): void {
-		const transaction: iTransactionInternal = new Transaction(this.sqLiteDb);
+		const transaction: iTransaction = new Transaction(this.sqLiteDb);
 		transaction.onTransactionStart(callback);
 		transaction.onTransactionError(errorCallback);
 	}
