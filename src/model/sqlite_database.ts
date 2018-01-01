@@ -13,7 +13,7 @@ export class SQLiteDatabase implements iSQLiteDatabase {
 		this.name = name;
 		let databaseName: string = name + ".sqlite3";
 		this.sqLiteDb = SQLiteInstance.openDatabase(databaseName, "", "", "", (_result: any) => {
-			// Logger.log(_result);
+			// todo
 		});
 	}
 

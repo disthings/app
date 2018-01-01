@@ -1,7 +1,6 @@
 import {iSyncManager} from "./i_sync_manager";
 import {MessageCallback, Settings, Subscriber} from "../types";
 import {Message} from "../types";
-import {Logger} from "../logger";
 import {SettingsManager} from "./settings_manager";
 
 export class SyncManager implements iSyncManager {
@@ -39,7 +38,7 @@ export class SyncManager implements iSyncManager {
 		};
 
 		this.webSocket.onerror = (error: Event): void => {
-			Logger.warn("WebSocket " + error.type);
+			console.warn("WebSocket " + error.type);
 		};
 
 		this.webSocket.onmessage = (ev: MessageEvent): any => {

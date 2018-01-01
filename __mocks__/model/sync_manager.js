@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = require("../../src/logger");
 const settings_manager_1 = require("../../src/model/settings_manager");
 const WebSocket = require("ws");
 class SyncManager {
@@ -25,7 +24,7 @@ class SyncManager {
             this.tryToConnect();
         };
         this.webSocket.onerror = (error) => {
-            logger_1.Logger.warn("WebSocket " + error);
+            console.warn("WebSocket " + error);
         };
         this.webSocket.onmessage = (ev) => {
             let message = JSON.parse(ev.data);

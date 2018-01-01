@@ -8,7 +8,6 @@ import {SettingsManager} from "./settings_manager";
 import {Peripheral} from "../../src/model/peripheral";
 import {SQLiteDatabase} from "./sqlite_database";
 import {iTransaction} from "./i_transaction";
-import {Logger} from "../../src/logger";
 
 export class DataManager implements iDataManager {
 
@@ -42,7 +41,7 @@ export class DataManager implements iDataManager {
 					});
 
 				}, (error: Error) => {
-					Logger.error("activateDataRetentionInterval", error);
+					console.error("activateDataRetentionInterval", error);
 				});
 			});
 		}, this.dataRetentionInterval);
@@ -57,7 +56,7 @@ export class DataManager implements iDataManager {
 			this.databases.set(name, new SQLiteDatabase(name));
 		}
 		else {
-			Logger.error(new Error("Database name already exists"));
+			console.error(new Error("Database name already exists"));
 		}
 
 		return this.getDatabase(name);
@@ -65,14 +64,14 @@ export class DataManager implements iDataManager {
 
 	getDatabase(name: string): iSQLiteDatabase {
 		if(!this.doesDatabaseExist(name)) {
-			Logger.error(new Error("Database does not exist"));
+			console.error(new Error("Database does not exist"));
 		}
 		return this.databases.get(name) as iSQLiteDatabase;
 	}
 
 	closeDatabase(name: string, errorCallback: ErrorCallback): void {
 		if(!this.doesDatabaseExist(name)) {
-			Logger.error(new Error("Database does not exist"));
+			console.error(new Error("Database does not exist"));
 		}
 		this.getDatabase(name).close(errorCallback);
 	}
@@ -107,22 +106,27 @@ export class DataManager implements iDataManager {
 				this.serverPeripherals.push(peripheralPartsContainer);
 			}
 			else {
-				Logger.error(new Error("Invalid peripheral type: " + type));
+				console.error(new Error("Invalid peripheral type: " + type));
 			}
 		}
 		else {
-			Logger.error(new Error("Duplicate peripheral name: " + name));
+			console.error(new Error("Duplicate peripheral name: " + name));
 		}
 	}
 
 	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + DatabaseTable.DATA + "' (dataPackage BLOB);", [],
 			(error: Error) => {
-				console.log("createDbTables1", error);
+				if(!error.message.endsWith("already exists")) {
+					console.error("createDbTables1", error);
+				}
+
 		});
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() +  "_" + DatabaseTable.BACKUP + "' (dataPackage BLOB);", [],
 			(error: Error) => {
-				console.log("createDbTables2", error);
+				if(!error.message.endsWith("already exists")) {
+					console.error("createDbTables2", error);
+				}
 		});
 		callback();
 	}
@@ -147,7 +151,9 @@ export class DataManager implements iDataManager {
 		if(values !== "") {
 			let query: string = "INSERT INTO '" + peripheral.getName() +  "_" + table + "' (dataPackage) VALUES ('" + values + "');";
 			transaction.executeSql(query, [], (error: Error) => {
-				Logger.error("insertDataIntoDb", error);
+				if(error) {
+					console.error("insertDataIntoDb", error);
+				}
 			});
 			callback();
 		}
@@ -169,12 +175,13 @@ export class DataManager implements iDataManager {
 
 		const query: string = "SELECT * FROM '" + peripheral.getName() +  "_" + table +"';";
 
-		transaction.executeSql(query, [], (result: any) => {
+		transaction.all(query, [], (_error: Error, result: any) => {
+
 			let data: Array<UserDataStructure> = [];
-			const rows: any = result.rows;
-			if(rows) {
-				for (let i: number = 0; i < rows.length; i++) {
-					let row: any = rows.item(i).dataPackage;
+
+			if(result) {
+				for (let i: number = 0; i < result.length; i++) {
+					let row: any = result[i].dataPackage;
 					let parsedRow: Array<UserDataStructure> = JSON.parse(row);
 
 					data = data.concat(parsedRow);
@@ -187,7 +194,9 @@ export class DataManager implements iDataManager {
 	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_DATA" +"';";
 		transaction.executeSql(query, [], (error: Error) => {
-			Logger.error("emptyDataTable", error);
+			if(error) {
+				console.error("emptyDataTable", error);
+			}
 		});
 		callback();
 	}
@@ -195,7 +204,9 @@ export class DataManager implements iDataManager {
 	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_BACKUP" +"';";
 		transaction.executeSql(query, [], (error: Error) => {
-			Logger.error("emptyBackupTable", error);
+			if(error) {
+				console.error("emptyBackupTable", error);
+			}
 		});
 		callback();
 	}

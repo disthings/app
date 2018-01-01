@@ -25,6 +25,10 @@ export class Transaction implements iTransaction {
 		this.transaction.run(sqlStatement, args, callback);
 	}
 
+	all(sqlStatement: string, args: Array<any>, callback: Function): void {
+		this.transaction.all(sqlStatement, args, callback);
+	}
+
 	commit(callback: ErrorCallback): void {
 		this.transaction.commit(callback);
 	}

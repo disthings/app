@@ -11,7 +11,6 @@ import {
 import {iSQLiteDatabase} from "../model/i_sqlite_database";
 import {forEachAsync} from "../forEachAsync";
 import {iTransaction} from "../model/i_transaction";
-import {Logger} from "../logger";
 import Timer = NodeJS.Timer;
 import {DefaultValues} from "../defaults/default_values";
 import {Peripheral} from "../model/peripheral";
@@ -55,7 +54,7 @@ export class App implements iApp {
 			else {
 				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.setRuntimeSettings(this.settings, (_error: Error) => {
-					Logger.log(_error);
+					console.log(_error);
 				});
 			}
 
@@ -117,7 +116,7 @@ export class App implements iApp {
 
 				break;
 			default:
-				Logger.error("No such screen");
+				console.error("No such screen");
 		}
 	}
 
@@ -187,7 +186,7 @@ export class App implements iApp {
 				this.stopWaitingForServer();
 			});
 		}, (error: Error) => {
-			Logger.error(error);
+			console.error(error);
 		});
 	}
 
@@ -226,7 +225,7 @@ export class App implements iApp {
 		}
 
 		this.dataManager.closeDatabase(peripheral.getName(), (error: Error) => {
-			Logger.error(error);
+			console.error(error);
 		});
 	}
 
@@ -241,7 +240,7 @@ export class App implements iApp {
 				arrayToBeSearched = this.getServerPeripherals();
 				break;
 			default:
-				Logger.error("No such peripheral type.");
+				console.error("No such peripheral type.");
 		}
 
 		return arrayToBeSearched;
@@ -336,7 +335,7 @@ export class App implements iApp {
 				});
 
 				}, (error: Error) => {
-				Logger.error("getClientAllPeripheralsViewData", error);
+				console.error("getClientAllPeripheralsViewData", error);
 			});
 		},() => {
 			callback(responseDataPackages);

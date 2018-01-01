@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../src/types");
 const settings_manager_1 = require("./settings_manager");
 const sqlite_database_1 = require("./sqlite_database");
-const logger_1 = require("../../src/logger");
 class DataManager {
     constructor() {
         this.databases = new Map();
@@ -23,7 +22,7 @@ class DataManager {
                         peripheral.deleteOldDataFromMemory();
                     });
                 }, (error) => {
-                    logger_1.Logger.error("activateDataRetentionInterval", error);
+                    console.error("activateDataRetentionInterval", error);
                 });
             });
         }, this.dataRetentionInterval);
@@ -36,19 +35,19 @@ class DataManager {
             this.databases.set(name, new sqlite_database_1.SQLiteDatabase(name));
         }
         else {
-            logger_1.Logger.error(new Error("Database name already exists"));
+            console.error(new Error("Database name already exists"));
         }
         return this.getDatabase(name);
     }
     getDatabase(name) {
         if (!this.doesDatabaseExist(name)) {
-            logger_1.Logger.error(new Error("Database does not exist"));
+            console.error(new Error("Database does not exist"));
         }
         return this.databases.get(name);
     }
     closeDatabase(name, errorCallback) {
         if (!this.doesDatabaseExist(name)) {
-            logger_1.Logger.error(new Error("Database does not exist"));
+            console.error(new Error("Database does not exist"));
         }
         this.getDatabase(name).close(errorCallback);
     }
@@ -75,19 +74,23 @@ class DataManager {
                 this.serverPeripherals.push(peripheralPartsContainer);
             }
             else {
-                logger_1.Logger.error(new Error("Invalid peripheral type: " + type));
+                console.error(new Error("Invalid peripheral type: " + type));
             }
         }
         else {
-            logger_1.Logger.error(new Error("Duplicate peripheral name: " + name));
+            console.error(new Error("Duplicate peripheral name: " + name));
         }
     }
     createDbTables(peripheral, transaction, callback) {
         transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + types_1.DatabaseTable.DATA + "' (dataPackage BLOB);", [], (error) => {
-            console.log("createDbTables1", error);
+            if (!error.message.endsWith("already exists")) {
+                console.error("createDbTables1", error);
+            }
         });
         transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + types_1.DatabaseTable.BACKUP + "' (dataPackage BLOB);", [], (error) => {
-            console.log("createDbTables2", error);
+            if (!error.message.endsWith("already exists")) {
+                console.error("createDbTables2", error);
+            }
         });
         callback();
     }
@@ -102,7 +105,9 @@ class DataManager {
         if (values !== "") {
             let query = "INSERT INTO '" + peripheral.getName() + "_" + table + "' (dataPackage) VALUES ('" + values + "');";
             transaction.executeSql(query, [], (error) => {
-                logger_1.Logger.error("insertDataIntoDb", error);
+                if (error) {
+                    console.error("insertDataIntoDb", error);
+                }
             });
             callback();
         }
@@ -118,12 +123,11 @@ class DataManager {
     }
     restoreAllDataFromTable(peripheral, table, transaction, callback) {
         const query = "SELECT * FROM '" + peripheral.getName() + "_" + table + "';";
-        transaction.executeSql(query, [], (result) => {
+        transaction.all(query, [], (_error, result) => {
             let data = [];
-            const rows = result.rows;
-            if (rows) {
-                for (let i = 0; i < rows.length; i++) {
-                    let row = rows.item(i).dataPackage;
+            if (result) {
+                for (let i = 0; i < result.length; i++) {
+                    let row = result[i].dataPackage;
                     let parsedRow = JSON.parse(row);
                     data = data.concat(parsedRow);
                 }
@@ -134,14 +138,18 @@ class DataManager {
     emptyDataTable(peripheral, transaction, callback) {
         const query = "DELETE FROM '" + peripheral.getName() + "_DATA" + "';";
         transaction.executeSql(query, [], (error) => {
-            logger_1.Logger.error("emptyDataTable", error);
+            if (error) {
+                console.error("emptyDataTable", error);
+            }
         });
         callback();
     }
     emptyBackupTable(peripheral, transaction, callback) {
         const query = "DELETE FROM '" + peripheral.getName() + "_BACKUP" + "';";
         transaction.executeSql(query, [], (error) => {
-            logger_1.Logger.error("emptyBackupTable", error);
+            if (error) {
+                console.error("emptyBackupTable", error);
+            }
         });
         callback();
     }

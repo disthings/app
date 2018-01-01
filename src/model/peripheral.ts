@@ -1,7 +1,6 @@
 import {
 	PeripheralType, Subscriber, UserDataStructure, DataSet, RequestDataPackage
 } from "../types";
-import {Logger} from "../logger";
 
 export abstract class Peripheral {
 
@@ -40,7 +39,7 @@ export abstract class Peripheral {
 
 	unsubscribeFromEvent(eventName: string, id: string): void {
 		if(!(eventName in this.subscribers)) {
-			Logger.error("No such event: " + eventName);
+			console.error("No such event: " + eventName);
 		}
 		else {
 			let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;

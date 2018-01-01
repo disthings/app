@@ -3,13 +3,12 @@ import {iTransaction} from "../model/i_transaction";
 import {DataSet, PeripheralType, QueryResultCallback, RequestDataPackage, UserDataStructure} from "../types";
 import {iServerPeripheral} from "../model/i_server_peripheral";
 import {Peripheral} from "../model/peripheral";
-import {Logger} from "../logger";
 
 export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iServerPeripheral {
 
 	constructor(name: string, type: PeripheralType) {
 		super(name, type);
-		Logger.warn("You created an EmptyPeripheral named: " + name + ". Please check the class for more information.");
+		console.warn("You created an EmptyPeripheral named: " + name + ". Please check the class for more information.");
 	}
 
 	getOldData(): UserDataStructure {

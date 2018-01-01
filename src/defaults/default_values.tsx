@@ -1,4 +1,4 @@
-import {PeripheralPartsContainer, PeripheralType} from "../types";
+import {ErrorCallback, PeripheralPartsContainer, PeripheralType} from "../types";
 import {EmptyView} from "./empty_view";
 import {EmptyPeripheral} from "./empty_peripheral";
 import {Peripheral} from "../model/peripheral";
@@ -12,4 +12,10 @@ export class DefaultValues {
 		tile: EmptyView,
 		key: "EmptyPeripheral"
 	};
+
+	static ERROR_CALLBACK: ErrorCallback = (error: Error) => {
+		if(error) {
+			console.error(error);
+		}
+	}
 }

@@ -14,6 +14,9 @@ class Transaction {
     executeSql(sqlStatement, args, callback) {
         this.transaction.run(sqlStatement, args, callback);
     }
+    all(sqlStatement, args, callback) {
+        this.transaction.all(sqlStatement, args, callback);
+    }
     commit(callback) {
         this.transaction.commit(callback);
     }

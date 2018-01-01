@@ -4,7 +4,6 @@ const sync_manager_1 = require("../model/sync_manager");
 const data_manager_1 = require("../model/data_manager");
 const types_1 = require("../../src/types");
 const forEachAsync_1 = require("../../src/forEachAsync");
-const logger_1 = require("../../src/logger");
 const default_values_1 = require("../../src/defaults/default_values");
 const settings_manager_1 = require("../model/settings_manager");
 class App {
@@ -24,7 +23,7 @@ class App {
             else {
                 this.settings = settings_manager_1.SettingsManager.getStartingSettings();
                 settings_manager_1.SettingsManager.setRuntimeSettings(this.settings, (_error) => {
-                    logger_1.Logger.log("App_constructor", _error);
+                    console.log("App_constructor", _error);
                 });
             }
             this.maxTryCounter = this.settings.maxTryCounter;
@@ -78,7 +77,7 @@ class App {
             case types_1.ViewType.SETTINGS:
                 break;
             default:
-                logger_1.Logger.error("No such screen");
+                console.error("No such screen");
         }
     }
     deactivateInterval() {
@@ -133,10 +132,10 @@ class App {
                 this.stopWaitingForServer();
             });
             transaction.commit((error) => {
-                logger_1.Logger.error("addClientPeripheral 1", error);
+                console.error("addClientPeripheral 1", error);
             });
         }, (error) => {
-            logger_1.Logger.error("addClientPeripheral 2", error);
+            console.error("addClientPeripheral 2", error);
         });
     }
     addServerPeripheral(peripheralPartsContainer) {
@@ -166,7 +165,7 @@ class App {
             i++;
         }
         this.dataManager.closeDatabase(peripheral.getName(), (error) => {
-            logger_1.Logger.error("removePeripheral", error);
+            console.error("removePeripheral", error);
         });
     }
     getArrayBasedOnPeripheralType(peripheralType) {
@@ -179,7 +178,7 @@ class App {
                 arrayToBeSearched = this.getServerPeripherals();
                 break;
             default:
-                logger_1.Logger.error("No such peripheral type.");
+                console.error("No such peripheral type.");
         }
         return arrayToBeSearched;
     }
@@ -250,13 +249,13 @@ class App {
                     });
                     this.dataManager.emptyDataTable(peripheral, transaction, () => {
                         transaction.commit((error) => {
-                            logger_1.Logger.error("getClientAllPeripheralsViewData 1", error);
+                            console.error("getClientAllPeripheralsViewData 1", error);
                         });
                         next();
                     });
                 });
             }, (error) => {
-                logger_1.Logger.error("getClientAllPeripheralsViewData 2", error);
+                console.error("getClientAllPeripheralsViewData 2", error);
             });
         }, () => {
             callback(responseDataPackages);

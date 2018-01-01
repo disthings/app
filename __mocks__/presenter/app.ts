@@ -9,7 +9,6 @@ import {
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import {forEachAsync} from "../../src/forEachAsync";
-import {Logger} from "../../src/logger";
 import Timer = NodeJS.Timer;
 import {DefaultValues} from "../../src/defaults/default_values";
 import {Peripheral} from "../../src/model/peripheral";
@@ -54,7 +53,7 @@ export class App implements iApp {
 			else {
 				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.setRuntimeSettings(this.settings, (_error: Error) => {
-					Logger.log("App_constructor", _error);
+					console.log("App_constructor", _error);
 				});
 			}
 
@@ -118,7 +117,7 @@ export class App implements iApp {
 
 				break;
 			default:
-				Logger.error("No such screen");
+				console.error("No such screen");
 		}
 	}
 
@@ -189,10 +188,10 @@ export class App implements iApp {
 			});
 
 			transaction.commit((error: Error) => {
-				Logger.error("addClientPeripheral 1", error);
+				console.error("addClientPeripheral 1", error);
 			});
 		}, (error: Error) => {
-			Logger.error("addClientPeripheral 2", error);
+			console.error("addClientPeripheral 2", error);
 		});
 	}
 
@@ -231,7 +230,7 @@ export class App implements iApp {
 		}
 
 		this.dataManager.closeDatabase(peripheral.getName(), (error: Error) => {
-			Logger.error("removePeripheral", error);
+			console.error("removePeripheral", error);
 		});
 	}
 
@@ -246,7 +245,7 @@ export class App implements iApp {
 				arrayToBeSearched = this.getServerPeripherals();
 				break;
 			default:
-				Logger.error("No such peripheral type.");
+				console.error("No such peripheral type.");
 		}
 
 		return arrayToBeSearched;
@@ -337,14 +336,14 @@ export class App implements iApp {
 
 					this.dataManager.emptyDataTable(peripheral, transaction, () => {
 						transaction.commit((error: Error) => {
-							Logger.error("getClientAllPeripheralsViewData 1", error);
+							console.error("getClientAllPeripheralsViewData 1", error);
 						});
 						next();
 					});
 				});
 
 			}, (error: Error) => {
-				Logger.error("getClientAllPeripheralsViewData 2", error);
+				console.error("getClientAllPeripheralsViewData 2", error);
 			});
 		},() => {
 			callback(responseDataPackages);
