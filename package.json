@@ -1,51 +1,63 @@
 {
-  "name": "disthings",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
-  },
-  "dependencies": {
-    "react": "16.0.0",
-    "react-native": "0.51.0",
-	"react-native-root-toast": "^2.2.1",
-	"react-native-sensors": "^2.4.2",
-	"react-native-sqlite-2": "^1.5.0"
-  },
-  "devDependencies": {
-	"@types/jest": "^22.0.0",
-	"@types/node": "^8.0.58",
-	"@types/react": "^16.0.23",
-	"@types/react-native": "^0.51.2",
-	"@types/react-test-renderer": "^16.0.0",
-    "babel-jest": "22.0.4",
-    "babel-preset-react-native": "4.0.0",
-    "jest": "20.0.4",
-	"jest-cli": "^22.0.4",
-    "react-test-renderer": "16.0.0",
-	"sqlite3": "^3.1.13",
-	"sqlite3-transactions": "0.0.5",
-	"ts-jest": "^19.0.14",
-	"typescript": "^2.6.2",
-	"ws": "^3.3.3"
-  },
-  "jest": {
-	"preset": "react-native",
-	"moduleFileExtensions": [
-	  "ts",
-	  "tsx",
-	  "js"
-	],
-	"transform": {
-	  "^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
-	  "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+	"name": "disthings",
+	"version": "0.0.1",
+	"scripts": {
+		"start": "adb reverse tcp:8081 tcp:8081 && react-native run-android",
+		"test": "jest"
 	},
-	"testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
-	"testPathIgnorePatterns": [
-	  "\\.snap$",
-	  "<rootDir>/node_modules/"
+	"contributors": [
+		{
+			"name": "Alexandros Konstantakos",
+			"email": "alexander.k@zoho.com"
+		}
 	],
-	"cacheDirectory": ".jest/cache"
-  }
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/disthings/app"
+	},
+	"license": "SEE LICENSE IN LICENSE.md",
+	"dependencies": {
+		"react": "16.0.0",
+		"react-native": "0.51.0",
+		"react-native-root-toast": "^2.2.1",
+		"react-native-sensors": "^2.4.2",
+		"react-native-sqlite-2": "^1.5.0"
+	},
+	"devDependencies": {
+		"@types/jest": "^22.0.0",
+		"@types/node": "^8.0.58",
+		"@types/react": "^16.0.23",
+		"@types/react-native": "^0.51.2",
+		"@types/react-test-renderer": "^16.0.0",
+		"@types/ws": "^3.2.1",
+		"babel-jest": "22.0.4",
+		"babel-preset-react-native": "4.0.0",
+		"jest": "20.0.4",
+		"jest-cli": "^22.0.4",
+		"react-native-cli": "^2.0.1",
+		"react-test-renderer": "16.0.0",
+		"sqlite3": "^3.1.13",
+		"sqlite3-transactions": "0.0.5",
+		"ts-jest": "^19.0.14",
+		"typescript": "^2.6.2",
+		"ws": "^3.3.3"
+	},
+	"jest": {
+		"preset": "react-native",
+		"moduleFileExtensions": [
+			"ts",
+			"tsx",
+			"js"
+		],
+		"transform": {
+			"^.+\\.(js)$": "<rootDir>/node_modules/babel-jest",
+			"\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+		},
+		"testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
+		"testPathIgnorePatterns": [
+			"\\.snap$",
+			"<rootDir>/node_modules/"
+		],
+		"cacheDirectory": ".jest/cache"
+	}
 }

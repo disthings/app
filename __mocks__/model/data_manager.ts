@@ -1,13 +1,13 @@
-import {iDataManager} from "./i_data_manager";
+import {iDataManager} from "../../src/model/i_data_manager";
 import {
 	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, QueryResultAsUserDataStructureCallback,
 	QueryResultCallback, UserDataStructure
-} from "../types";
-import {iSQLiteDatabase} from "./i_sqlite_database";
-import {SQLiteDatabase} from "./sqlite_database";
+} from "../../src/types";
+import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import {iTransaction} from "./i_transaction";
 import {SettingsManager} from "./settings_manager";
-import {Peripheral} from "./peripheral";
+import {Peripheral} from "../../src/model/peripheral";
+import {SQLiteDatabase} from "./sqlite_database";
 
 export class DataManager implements iDataManager {
 
@@ -114,10 +114,9 @@ export class DataManager implements iDataManager {
 		}
 	}
 
-	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
+	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + DatabaseTable.DATA + "' (dataPackage BLOB);", [],
-			(transaction: iTransaction, _result: any) => {
-
+			() => {
 				transaction.executeSql("CREATE TABLE '" + peripheral.getName() +  "_" + DatabaseTable.BACKUP + "' (dataPackage BLOB);", [], callback);
 			});
 	}
@@ -135,7 +134,7 @@ export class DataManager implements iDataManager {
 	}
 
 	private insertDataIntoDb(peripheral: Peripheral, table: DatabaseTable, data: Array<UserDataStructure>,
-							 transaction: iTransaction, callback: QueryResultCallback): void {
+							 transaction: iTransaction, callback: Function): void {
 
 		const values: string = JSON.stringify(data);
 
@@ -144,7 +143,7 @@ export class DataManager implements iDataManager {
 			transaction.executeSql(query, [], callback);
 		}
 		else {
-			callback(transaction, new Error("No values to enter"));
+			callback(new Error("No values to enter"));
 		}
 	}
 
@@ -157,11 +156,11 @@ export class DataManager implements iDataManager {
 	}
 
 	private restoreAllDataFromTable(peripheral: Peripheral, table: DatabaseTable,
-									transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+									transaction: iTransaction, callback: Function): void {
 
 		const query: string = "SELECT * FROM '" + peripheral.getName() +  "_" + table +"';";
 
-		transaction.executeSql(query, [], (_transaction: iTransaction, result: any) => {
+		transaction.executeSql(query, [], (result: any) => {
 			let data: Array<UserDataStructure> = [];
 			const rows: any = result.rows;
 			if(rows) {
@@ -172,16 +171,16 @@ export class DataManager implements iDataManager {
 					data = data.concat(parsedRow);
 				}
 			}
-			callback(_transaction, data);
+			callback(data);
 		});
 	}
 
-	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
+	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_DATA" +"';";
 		transaction.executeSql(query, [], callback);
 	}
 
-	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
+	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_BACKUP" +"';";
 		transaction.executeSql(query, [], callback);
 	}

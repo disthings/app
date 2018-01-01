@@ -30,8 +30,6 @@ export type RequestDataPackage = {name: string; timestamp: number; data: any; pe
 
 export type ResponseDataPackage = {name: string; data: any; peripheralType: PeripheralType; dataSet: DataSet};
 
-export type Map<T> = {[key: string]: T};
-
 export type ErrorCallback = (error: Error) => void;
 
 export type WebSocketStartingSettings = {

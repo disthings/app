@@ -1,5 +1,5 @@
 import {
-	PeripheralType, Subscriber, Map, UserDataStructure, DataSet, RequestDataPackage
+	PeripheralType, Subscriber, UserDataStructure, DataSet, RequestDataPackage
 } from "../types";
 import {Logger} from "../logger";
 
@@ -8,12 +8,12 @@ export abstract class Peripheral {
 	private name: string;
 	private data: Array<UserDataStructure>;
 	private type: PeripheralType;
-	private subscribers: Map<Array<Subscriber>>;
+	private subscribers: Map<string, Array<Subscriber>>;
 
 	constructor(name: string, type: PeripheralType) {
 		this.name = name;
 		this.type = type;
-		this.subscribers = {};
+		this.subscribers = new Map<string, Array<Subscriber>>();
 		this.data = [];
 	}
 
@@ -30,10 +30,12 @@ export abstract class Peripheral {
 	}
 
 	subscribeToEvent(eventName: string, callback: Function, id: string): void {
-		if(!(eventName in this.subscribers)) {
-			this.subscribers[eventName] = [];
+		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
+		if(!subs) {
+			subs = [];
+			this.subscribers.set(eventName, subs);
 		}
-		this.subscribers[eventName].push({callback: callback, id: id});
+		subs.push({callback: callback, id: id});
 	}
 
 	unsubscribeFromEvent(eventName: string, id: string): void {
@@ -41,7 +43,7 @@ export abstract class Peripheral {
 			Logger.error("No such event: " + eventName);
 		}
 		else {
-			let subs: Array<Subscriber> = this.subscribers[eventName];
+			let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 			let i: number = 0;
 			let found: boolean = false;
 			while(!found && i < subs.length) {
@@ -54,9 +56,9 @@ export abstract class Peripheral {
 	}
 
 	informEventSubscribers(eventName: string, ...args: Array<any>): void {
-		if(eventName in this.subscribers) {
-			let subs: Array<Subscriber> = this.subscribers[eventName];
+		const subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 
+		if(subs) {
 			subs.forEach((sub: Subscriber) => {
 				sub.callback(args);
 			});

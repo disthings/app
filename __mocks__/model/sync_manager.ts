@@ -1,8 +1,8 @@
-import {iSyncManager} from "./i_sync_manager";
-import {MessageCallback, Settings, Subscriber} from "../types";
-import {Message} from "../types";
-import {Logger} from "../logger";
-import {SettingsManager} from "./settings_manager";
+import {iSyncManager} from "../../src/model/i_sync_manager";
+import {MessageCallback, Settings, Subscriber, Message} from "../../src/types";
+import {Logger} from "../../src/logger";
+import {SettingsManager} from "../../src/model/settings_manager";
+import * as WebSocket from "ws";
 
 export class SyncManager implements iSyncManager {
 
@@ -38,11 +38,11 @@ export class SyncManager implements iSyncManager {
 			this.tryToConnect();
 		};
 
-		this.webSocket.onerror = (error: Event): void => {
-			Logger.warn("WebSocket " + error.type);
+		this.webSocket.onerror = (error: Error): void => {
+			Logger.warn("WebSocket " + error);
 		};
 
-		this.webSocket.onmessage = (ev: MessageEvent): any => {
+		this.webSocket.onmessage = (ev: {data: {}, type: string, target: WebSocket}): void => {
 			let message: Message = JSON.parse(ev.data as string);
 			this.informMessageSubscribers(message);
 		};

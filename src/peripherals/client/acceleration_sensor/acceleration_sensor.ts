@@ -21,7 +21,7 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 	readPeripheralData(): void {
 
 		this.accelerationObservable
-			.map(({x, y, z }) => x + y + z)
+			.map(({x, y, z }: {x: number; y: number; z: number}) => x + y + z)
 			.filter((speed: number) => speed > 20)
 			.subscribe((speed: number) => {
 				this.setData(this.getData().concat([{
