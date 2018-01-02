@@ -13,8 +13,6 @@ export enum DataSet {TILE = "TILE", VIEW = "VIEW", NONE = "NONE"}
 
 export enum ViewType {MAIN = "MAIN", PERIPHERAL = "PERIPHERAL", SETTINGS = "SETTINGS"}
 
-export enum Orientation {PORTRAIT = "PORTRAIT", LANDSCAPE = "LANDSCAPE"}
-
 export enum DatabaseTable {DATA = "DATA", BACKUP = "BACKUP"}
 
 // generic
@@ -22,7 +20,7 @@ export type Message = {data: Array<any>; type: string;};
 
 export type MessageCallback = (message: Message) => void;
 
-export type Subscriber = {callback: Function; id: string};
+export type Subscriber = {callback: SpreadArgumentsCallback; id: string};
 
 export type PeripheralPartsContainer = {peripheral: Peripheral | iPeripheral; view: Function; tile: Function; key: string};
 
@@ -31,6 +29,8 @@ export type RequestDataPackage = {name: string; timestamp: number; data: any; pe
 export type ResponseDataPackage = {name: string; data: any; peripheralType: PeripheralType; dataSet: DataSet};
 
 export type ErrorCallback = (error: Error) => void;
+
+export type SpreadArgumentsCallback = (...args: Array<any>) => void;
 
 export type WebSocketStartingSettings = {
 	readonly host: string;

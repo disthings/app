@@ -1,8 +1,12 @@
 import {iSyncManager} from "./i_synchronization_manager";
-import {MessageCallback, Settings, Subscriber} from "../types";
+import {MessageCallback, Settings, SpreadArgumentsCallback, Subscriber} from "../types";
 import {Message} from "../types";
 import {SettingsManager} from "./settings_manager";
 
+/*
+A wrapper class around the WebSocket class. It offers incoming and outgoing message management,
+and reconnects automatically.
+ */
 export class SyncManager implements iSyncManager {
 
 	private incomingMessageSubscribers: Map<string, Array<Subscriber>>;
@@ -19,6 +23,7 @@ export class SyncManager implements iSyncManager {
 		this.incomingMessageSubscribers.set("onSocketDisconnect", []);
 		this.incomingMessageSubscribers.set("onSocketReconnect", []);
 
+		// get the settings and connect
 		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
 			this.settings = result.webSocket;
 			this.webSocketAddress = this.settings.host + ":" + this.settings.port + this.settings.path;
@@ -51,7 +56,7 @@ export class SyncManager implements iSyncManager {
 		this.webSocket.send(JSON.stringify(message));
 	}
 
-	subscribeToMessage(messageType: string, callback: MessageCallback, id: string): void {
+	subscribeToMessageType(messageType: string, callback: MessageCallback, id: string): void {
 		let subs: Array<Subscriber> = this.getIncomingMessageSubscribers(messageType);
 		if(!subs) {
 			subs = [];
@@ -60,7 +65,7 @@ export class SyncManager implements iSyncManager {
 		subs.push({"callback": callback, "id": id});
 	}
 
-	onSocketReady(callback: Function, id: string): void {
+	onSocketReady(callback: SpreadArgumentsCallback, id: string): void {
 		let subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketReady");
 		if(!subs) {
 			subs = [];
@@ -69,7 +74,7 @@ export class SyncManager implements iSyncManager {
 		subs.push({"callback": callback, "id": id});
 	}
 
-	onSocketDisconnect(callback: Function, id: string): void {
+	onSocketDisconnect(callback: SpreadArgumentsCallback, id: string): void {
 		let subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketDisconnect");
 		if(!subs) {
 			subs = [];
@@ -90,8 +95,8 @@ export class SyncManager implements iSyncManager {
 		}
 	}
 
-	private informOnSocketReady(): void {
-		const subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketReady");
+	private informSubscribers(type: string): void {
+		const subs: Array<Subscriber> = this.getIncomingMessageSubscribers(type);
 		if(subs) {
 			subs.forEach((subscriber: Subscriber) => {
 				subscriber.callback();
@@ -99,13 +104,12 @@ export class SyncManager implements iSyncManager {
 		}
 	}
 
+	private informOnSocketReady(): void {
+		this.informSubscribers("onSocketReady");
+	}
+
 	private informOnSocketDisconnected(): void {
-		const subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketDisconnect");
-		if(subs) {
-			subs.forEach((subscriber: Subscriber) => {
-				subscriber.callback();
-			});
-		}
+		this.informSubscribers("onSocketDisconnect");
 	}
 
 	private getIncomingMessageSubscribers(messageType: string): Array<Subscriber> {

@@ -2,6 +2,9 @@ import {AsyncStorage} from "react-native";
 import {StartingSettings} from "../starting_settings";
 import {Settings} from "../types";
 
+/*
+This is a wrapper class around AsyncStorage. It is used to manage the application settings.
+ */
 export class SettingsManager {
 
 	static getStartingSettings(): StartingSettings {

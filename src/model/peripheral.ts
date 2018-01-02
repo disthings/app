@@ -1,5 +1,5 @@
 import {
-	PeripheralType, Subscriber, UserDataStructure, DataSet, RequestDataPackage
+	PeripheralType, Subscriber, UserDataStructure, DataSet, RequestDataPackage, SpreadArgumentsCallback
 } from "../types";
 
 /*
@@ -36,7 +36,7 @@ export abstract class Peripheral {
 	/*
 	Use this to subscribe to some peripheral related event.
 	 */
-	subscribeToEvent(eventName: string, callback: Function, subscriberID: string): void {
+	subscribeToEvent(eventName: string, callback: SpreadArgumentsCallback, subscriberID: string): void {
 		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 		if(!subs) {
 			subs = [];

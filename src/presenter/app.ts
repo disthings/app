@@ -256,7 +256,7 @@ export class App implements iApp {
 	}
 
 	private subscribeToServerAllPeripheralsData(): void {
-		this.syncManager.subscribeToMessage("serverAllPeripheralsData", (message: Message) => {
+		this.syncManager.subscribeToMessageType("serverAllPeripheralsData", (message: Message) => {
 			this.addServerPeripheralsData(message.data);
 			this.sendServerAllPeripheralsDataReceived();
 		}, this.subscriberID);
@@ -270,7 +270,7 @@ export class App implements iApp {
 	}
 
 	private subscribeToGetClientAllPeripheralsData(): void {
-		this.syncManager.subscribeToMessage("getClientAllPeripheralsData", (message: Message) => {
+		this.syncManager.subscribeToMessageType("getClientAllPeripheralsData", (message: Message) => {
 			this.sendClientPeripheralsData(message);
 		}, this.subscriberID);
 	}
@@ -287,7 +287,7 @@ export class App implements iApp {
 	}
 
 	private subscribeToClientAllPeripheralsDataReceived(): void {
-		this.syncManager.subscribeToMessage("clientAllPeripheralsDataReceived", (_message: Message) => {
+		this.syncManager.subscribeToMessageType("clientAllPeripheralsDataReceived", (_message: Message) => {
 			this.stopWaitingForServer();
 		}, this.subscriberID);
 	}
@@ -295,7 +295,7 @@ export class App implements iApp {
 
 
 	private subscribeToServerPeripheralData(): void {
-		this.syncManager.subscribeToMessage("serverPeripheralData", (message: Message) => {
+		this.syncManager.subscribeToMessageType("serverPeripheralData", (message: Message) => {
 			this.addServerPeripheralsData(message.data);
 			this.sendServerPeripheralDataReceived();
 		}, this.subscriberID);

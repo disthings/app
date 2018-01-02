@@ -7,7 +7,7 @@ import {iApp} from "../presenter/i_app";
 import {SettingsView} from "./settings_view";
 import {
 	PeripheralPartsContainer, PeripheralType, ViewType, ViewContainerState, Subscriber,
-	PeripheralViewClass
+	PeripheralViewClass, SpreadArgumentsCallback
 } from "../types";
 import {peripherals} from "../peripherals/peripherals_declaration";
 import {ReactNode} from "react";
@@ -104,7 +104,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		});
 	}
 
-	subscribeToLayoutChange(callback: Function, id: string): void {
+	subscribeToLayoutChange(callback: SpreadArgumentsCallback, id: string): void {
 		this.onLayoutChangeSubscribers.push({
 			callback: callback,
 			id: id

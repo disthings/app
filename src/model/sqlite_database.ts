@@ -4,6 +4,9 @@ import {ErrorCallback, TransactionCallback} from "../types";
 import {Transaction} from "./transaction";
 import {iTransaction} from "./i_transaction";
 
+/*
+A wrapper class for the react-native-sqlite-2 module.
+ */
 export class SQLiteDatabase implements iSQLiteDatabase {
 
 	private sqLiteDb: any;
@@ -12,9 +15,7 @@ export class SQLiteDatabase implements iSQLiteDatabase {
 	constructor(name: string) {
 		this.name = name;
 		let databaseName: string = name + ".sqlite3";
-		this.sqLiteDb = SQLiteInstance.openDatabase(databaseName, "", "", "", (_result: any) => {
-			// todo
-		});
+		this.sqLiteDb = SQLiteInstance.openDatabase(databaseName, "", "", "");
 	}
 
 	close(callback: ErrorCallback): void {
