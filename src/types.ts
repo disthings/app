@@ -66,13 +66,13 @@ export type UserDataStructure = any;
 // sqLite
 export type TransactionCallback = (transaction: iTransaction) => void;
 
-export type QueryResultCallback = (transaction: iTransaction, result: any) => void;
+// export type QueryResultCallback = (transaction: iTransaction, result: any) => void;
 export type QueryResultAsUserDataStructureCallback = (transaction: iTransaction, result: UserDataStructure) => void;
 
 // react components
 export type MainViewProps = {
 	peripherals: Array<PeripheralPartsContainer>;
-	onPressTile: (view: ReactNode, peripheral: iPeripheral) => void;
+	onPressTile: (view: ReactNode, peripheral: Peripheral) => void;
 	subscribeToLayoutChange: (callback: Function, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
 };

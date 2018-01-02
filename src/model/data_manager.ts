@@ -1,7 +1,7 @@
 import {iDataManager} from "./i_data_manager";
 import {
 	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, QueryResultAsUserDataStructureCallback,
-	QueryResultCallback, UserDataStructure
+	UserDataStructure
 } from "../types";
 import {iSQLiteDatabase} from "./i_sqlite_database";
 import {SQLiteDatabase} from "./sqlite_database";
@@ -113,7 +113,7 @@ export class DataManager implements iDataManager {
 	as blobs for the purpose of keeping memory usage low. In the second are saved the data from memory as blobs in case
 	the app closes or goes to the background.
 	 */
-	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
+	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + DatabaseTable.DATA + "' (dataPackage BLOB);", [],
 			(transaction: iTransaction, _result: any) => {
 
@@ -122,19 +122,19 @@ export class DataManager implements iDataManager {
 	}
 
 	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							callback: QueryResultCallback): void {
+							callback: Function): void {
 
 		this.insertDataIntoDb(peripheral, DatabaseTable.DATA, data, transaction, callback);
 	}
 
 	insertDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							  callback: QueryResultCallback): void {
+							  callback: Function): void {
 
 		this.insertDataIntoDb(peripheral, DatabaseTable.BACKUP, data, transaction, callback);
 	}
 
 	private insertDataIntoDb(peripheral: Peripheral, table: DatabaseTable, data: Array<UserDataStructure>,
-							 transaction: iTransaction, callback: QueryResultCallback): void {
+							 transaction: iTransaction, callback: Function): void {
 
 		const values: string = JSON.stringify(data);
 
@@ -175,12 +175,12 @@ export class DataManager implements iDataManager {
 		});
 	}
 
-	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
+	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_DATA" +"';";
 		transaction.executeSql(query, [], callback);
 	}
 
-	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
+	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		const query: string = "DELETE FROM '" + peripheral.getName() +  "_BACKUP" +"';";
 		transaction.executeSql(query, [], callback);
 	}

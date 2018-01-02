@@ -3,14 +3,16 @@ import {
 } from "../types";
 
 /*
-
+To create a peripheral, this class must be extended, and one of the iClientPeripheral or iServerPeripheral interfaces
+must be implemented. It has a subscribe/publish mechanism to inform on events, and an array to save its data. It can
+also send commands to the server.
  */
 export abstract class Peripheral {
 
 	private name: string;
-	private data: Array<UserDataStructure>;
 	private type: PeripheralType;
 	private subscribers: Map<string, Array<Subscriber>>;
+	private data: Array<UserDataStructure>;
 
 	constructor(name: string, type: PeripheralType) {
 		this.name = name;
@@ -31,16 +33,22 @@ export abstract class Peripheral {
 		return this.type;
 	}
 
-	subscribeToEvent(eventName: string, callback: Function, id: string): void {
+	/*
+	Use this to subscribe to some peripheral related event.
+	 */
+	subscribeToEvent(eventName: string, callback: Function, subscriberID: string): void {
 		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 		if(!subs) {
 			subs = [];
 			this.subscribers.set(eventName, subs);
 		}
-		subs.push({callback: callback, id: id});
+		subs.push({callback: callback, id: subscriberID});
 	}
 
-	unsubscribeFromEvent(eventName: string, id: string): void {
+	/*
+	Use this to unsubscribe to some peripheral related event.
+	 */
+	unsubscribeFromEvent(eventName: string, subscriberID: string): void {
 		if(!this.subscribers.get(eventName)) {
 			console.error("No such event: " + eventName);
 		}
@@ -49,7 +57,7 @@ export abstract class Peripheral {
 			let i: number = 0;
 			let found: boolean = false;
 			while(!found && i < subs.length) {
-				if(found = subs[i].id === id) {
+				if(found = subs[i].id === subscriberID) {
 					subs.splice(i, 1);
 				}
 				i++;
@@ -57,7 +65,10 @@ export abstract class Peripheral {
 		}
 	}
 
-	informEventSubscribers(eventName: string, ...args: Array<any>): void {
+	/*
+	Use this to call the callbacks of all subscribers of an event. Pass any further arguments using the ...args.
+	 */
+	protected informEventSubscribers(eventName: string, ...args: Array<any>): void {
 		const subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 
 		if(subs) {
@@ -67,6 +78,11 @@ export abstract class Peripheral {
 		}
 	}
 
+	/*
+	Sets the data and informs the tile and view of the existence of new data. Since data is an array, you could	change
+	its contents without setData. It is advised to just getData(), apply changes, and use setData() to save them. This
+	way you can ensure that the changes are being propagated to the view.
+	 */
 	setData(data: Array<UserDataStructure>): void {
 		this.data = data;
 		this.informEventSubscribers("newViewData");
@@ -81,6 +97,9 @@ export abstract class Peripheral {
 		this.setData([]);
 	}
 
+	/*
+	This method is being called for requesting data for server peripherals.
+	 */
 	getRequestDataPackage(): RequestDataPackage {
 		return {
 			"name": this.getName(),
@@ -91,9 +110,23 @@ export abstract class Peripheral {
 		};
 	}
 
+	/*
+	Implement this method to sort through the data array and return what you consider as old data.
+	 */
 	abstract getOldData(): UserDataStructure;
+
+	/*
+	Implement this method to delete data you consider as old from the data array.
+	 */
 	abstract deleteOldDataFromMemory(): void;
+
+	/*
+	Implement this method to sort through the data array and return the data you want to show on the tile.
+	 */
 	abstract getTileData(): any;
+
+	/*
+	Implement this method to sort through the data array and return the data you want to show on the view.
+	 */
 	abstract getViewData(): any;
-	abstract getSettingsData(): any;
 }

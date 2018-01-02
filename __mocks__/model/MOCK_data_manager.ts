@@ -1,7 +1,7 @@
 import {iDataManager} from "../../src/model/i_data_manager";
 import {
-	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, QueryResultAsUserDataStructureCallback,
-	QueryResultCallback, UserDataStructure
+	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType,
+	QueryResultAsUserDataStructureCallback, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import {SettingsManager} from "./MOCK_settings_manager";
@@ -123,13 +123,13 @@ export class DataManager implements iDataManager {
 	}
 
 	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							callback: QueryResultCallback): void {
+							callback: Function): void {
 
 		this.insertDataIntoDb(peripheral, DatabaseTable.DATA, data, transaction, callback);
 	}
 
 	insertDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							  callback: QueryResultCallback): void {
+							  callback: Function): void {
 
 		this.insertDataIntoDb(peripheral, DatabaseTable.BACKUP, data, transaction, callback);
 	}
@@ -201,4 +201,6 @@ export class DataManager implements iDataManager {
 		});
 		callback();
 	}
+
+
 }

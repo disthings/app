@@ -17,9 +17,9 @@
 	},
 	"license": "SEE LICENSE IN LICENSE.md",
 	"dependencies": {
-		"react": "16.0.0",
+		"react": "16.2.0",
 		"react-native": "0.51.0",
-		"react-native-root-toast": "^2.2.1",
+		"react-native-root-toast": "^3.0.0",
 		"react-native-sensors": "^2.4.2",
 		"react-native-sqlite-2": "^1.5.0"
 	},
@@ -35,10 +35,10 @@
 		"jest": "20.0.4",
 		"jest-cli": "^22.0.4",
 		"react-native-cli": "^2.0.1",
-		"react-test-renderer": "16.0.0",
+		"react-test-renderer": "16.2.0",
 		"sqlite3": "^3.1.13",
 		"sqlite3-transactions": "0.0.5",
-		"ts-jest": "^19.0.14",
+		"ts-jest": "^22.0.0",
 		"typescript": "^2.6.2",
 		"ws": "^3.3.3"
 	},

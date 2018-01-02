@@ -3,7 +3,7 @@ import {iSyncManager} from "../model/i_synchronization_manager";
 import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
-import {Message, QueryResultCallback, UserDataStructure} from "../types";
+import {Message, UserDataStructure} from "../types";
 import {
 	DataSet, PeripheralPartsContainer, PeripheralType, RequestDataPackage,
 	ResponseDataPackage, Settings, ViewType
@@ -448,7 +448,7 @@ export class App implements iApp {
 
 						if (result) {
 							peripheral.setData(peripheral.getData().concat(result));
-							this.dataManager.emptyBackupTable(peripheral, backupTransaction, (_transaction: iTransaction, _result: QueryResultCallback) => {
+							this.dataManager.emptyBackupTable(peripheral, backupTransaction, (_transaction: iTransaction, _result: Function) => {
 								// todo
 							});
 						}

@@ -1,4 +1,4 @@
-import {ErrorCallback, QueryResultCallback} from "../types";
+import {ErrorCallback} from "../types";
 import {iTransaction} from "./i_transaction";
 
 export class Transaction implements iTransaction {
@@ -17,7 +17,7 @@ export class Transaction implements iTransaction {
 		}, this.onTransactionErrorCallback);
 	}
 
-	executeSql(sqlStatement: string, args: Array<any>, callback: QueryResultCallback): void {
+	executeSql(sqlStatement: string, args: Array<any>, callback: Function): void {
 		this.transaction.executeSql(sqlStatement, args, (transaction: iTransaction, result: any) => {
 			if(callback) {
 				callback(transaction, result);

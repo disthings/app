@@ -13,7 +13,6 @@ import {peripherals} from "../peripherals/peripherals_declaration";
 import {ReactNode} from "react";
 import {Peripheral} from "../model/peripheral";
 import {IPInputField} from "./ip_input_field";
-import {iPeripheral} from "../model/i_peripheral";
 
 export class ViewContainer<K extends any, L extends ViewContainerState> extends React.Component<any, ViewContainerState> {
 
@@ -80,7 +79,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		});
 	}
 
-	private showPeripheralView(peripheral: iPeripheral): void {
+	private showPeripheralView(peripheral: Peripheral): void {
 		this.app.setCurrentViewType(ViewType.PERIPHERAL);
 		this.app.setCurrentPeripheral(peripheral);
 		this.setState({currentView: ViewType.PERIPHERAL});

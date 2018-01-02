@@ -1,8 +1,7 @@
 import {iClientPeripheral} from "../model/i_client_peripheral";
-import {PeripheralType, RequestDataPackage, UserDataStructure} from "../types";
+import {DataSet, PeripheralType, RequestDataPackage, UserDataStructure} from "../types";
 import {iServerPeripheral} from "../model/i_server_peripheral";
 import {Peripheral} from "../model/peripheral";
-import {DefaultValues} from "./default_values";
 
 /*
 This is a default implementation of the class Peripheral, used for avoiding null.
@@ -36,7 +35,13 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 	}
 
 	getRequestDataPackage(): RequestDataPackage {
-		return DefaultValues.REQUEST_DATA_PACKAGE;
+		return {
+			name: "EmptyPeripheral",
+			timestamp: -1,
+			data: {},
+			peripheralType: PeripheralType.EMPTY,
+			dataSet: DataSet.NONE
+		};
 	}
 
 	deleteOldDataFromMemory(): void {

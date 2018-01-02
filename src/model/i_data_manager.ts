@@ -1,10 +1,10 @@
 import {iSQLiteDatabase} from "./i_sqlite_database";
 import {
-	ErrorCallback, PeripheralPartsContainer, QueryResultAsUserDataStructureCallback, QueryResultCallback,
+	ErrorCallback, PeripheralPartsContainer, QueryResultAsUserDataStructureCallback,
 	UserDataStructure
 } from "../types";
 import {iTransaction} from "./i_transaction";
-import {iPeripheral} from "./i_peripheral";
+import {Peripheral} from "./peripheral";
 
 export interface iDataManager {
 	createDatabase(name: string): iSQLiteDatabase;
@@ -13,13 +13,13 @@ export interface iDataManager {
 	getClientPeripherals(): Array<PeripheralPartsContainer>;
 	getServerPeripherals(): Array<PeripheralPartsContainer>;
 	addPeripheralToMemory(peripheralPartsContainer: PeripheralPartsContainer): void;
-	createDbTables(peripheral: iPeripheral, transaction: iTransaction, callback: QueryResultCallback): void;
-	insertDataIntoDataTable(peripheral: iPeripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							callback: QueryResultCallback): void;
-	insertDataIntoBackupTable(peripheral: iPeripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							  callback: QueryResultCallback): void;
-	restoreAllDataFromDataTable(peripheral: iPeripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
-	restoreAllDataFromBackupTable(peripheral: iPeripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
-	emptyDataTable(peripheral: iPeripheral, transaction: iTransaction, callback: QueryResultCallback): void;
-	emptyBackupTable(peripheral: iPeripheral, transaction: iTransaction, callback: QueryResultCallback): void;
+	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
+	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+							callback: Function): void;
+	insertDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+							  callback: Function): void;
+	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
+	restoreAllDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
+	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
+	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 }
