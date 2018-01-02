@@ -22,11 +22,4 @@ peripherals.push({
 	tile: LightSensorTileData
 });
 
-// peripherals.push({
-// 	key: "Location Sensor123",
-// 	peripheral: new AccelerationSensor(PeripheralType.CLIENT),
-// 	view: AccelerationSensorView,
-// 	tile: AccelerationSensorTileData
-// });
-
 export {peripherals};

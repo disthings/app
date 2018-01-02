@@ -84,20 +84,11 @@ export class DataManager implements iDataManager {
 		return this.serverPeripherals;
 	}
 
-	addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-
-		this.addPeripheral(peripheralPartsContainer, PeripheralType.CLIENT);
-	}
-
-	addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-
-		this.addPeripheral(peripheralPartsContainer, PeripheralType.SERVER);
-	}
-
-	private addPeripheral(peripheralPartsContainer: PeripheralPartsContainer, type: PeripheralType): void {
+	addPeripheralToMemory(peripheralPartsContainer: PeripheralPartsContainer): void {
 
 		const peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
 		const name: string = peripheral.getName();
+		const type: PeripheralType = peripheral.getType();
 		if(!this.doesDatabaseExist(name)) {
 			if(type === PeripheralType.CLIENT) {
 				this.clientPeripherals.push(peripheralPartsContainer);

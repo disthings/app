@@ -1,5 +1,5 @@
 import {iApp} from "../../src/presenter/i_app";
-import {iSyncManager} from "../../src/model/i_sync_manager";
+import {iSyncManager} from "../../src/model/i_synchronization_manager";
 import {SyncManager} from "../model/MOCK_sync_manager";
 import {iDataManager} from "../../src/model/i_data_manager";
 import {DataManager} from "../model/MOCK_data_manager";
@@ -177,7 +177,7 @@ export class App implements iApp {
 
 		let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
 
-		this.dataManager.addClientPeripheral(peripheralPartsContainer);
+		this.dataManager.addPeripheralToMemory(peripheralPartsContainer);
 
 		const db: iSQLiteDatabase = this.dataManager.createDatabase(peripheral.getName());
 
@@ -207,7 +207,7 @@ export class App implements iApp {
 			});
 		}, this.subscriberID);
 
-		this.dataManager.addServerPeripheral(peripheralPartsContainer);
+		this.dataManager.addPeripheralToMemory(peripheralPartsContainer);
 		this.stopWaitingForServer();
 	}
 

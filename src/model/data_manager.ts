@@ -9,6 +9,10 @@ import {iTransaction} from "./i_transaction";
 import {SettingsManager} from "./settings_manager";
 import {Peripheral} from "./peripheral";
 
+
+/*
+Here you can find how the data is being managed, in memory and in the Database.
+ */
 export class DataManager implements iDataManager {
 
 	private databases: Map<string, iSQLiteDatabase>;
@@ -36,7 +40,7 @@ export class DataManager implements iDataManager {
 				let db: iSQLiteDatabase = this.getDatabase(peripheralParts.key);
 				db.transaction((transaction: iTransaction) => {
 					// todo peripheral and peripheral.getOldData()
-					this.insertDataIntoDataTable(peripheral, peripheral.getOldData(), transaction, (_tx: iTransaction, _result: any) => {
+					this.insertDataIntoDataTable(peripheral, peripheral.getOldData(), transaction, () => {
 						peripheral.deleteOldDataFromMemory();
 					});
 
@@ -84,20 +88,11 @@ export class DataManager implements iDataManager {
 		return this.serverPeripherals;
 	}
 
-	addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-
-		this.addPeripheral(peripheralPartsContainer, PeripheralType.CLIENT);
-	}
-
-	addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-
-		this.addPeripheral(peripheralPartsContainer, PeripheralType.SERVER);
-	}
-
-	private addPeripheral(peripheralPartsContainer: PeripheralPartsContainer, type: PeripheralType): void {
+	addPeripheralToMemory(peripheralPartsContainer: PeripheralPartsContainer): void {
 
 		const peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
 		const name: string = peripheral.getName();
+		const type: PeripheralType = peripheral.getType();
 		if(!this.doesDatabaseExist(name)) {
 			if(type === PeripheralType.CLIENT) {
 				this.clientPeripherals.push(peripheralPartsContainer);
@@ -113,7 +108,11 @@ export class DataManager implements iDataManager {
 			throw new Error("Duplicate peripheral name: " + name);
 		}
 	}
-
+	/*
+	Creates two tables for one peripheral. The Data and the Backup. In the first one are saved the data from memory as
+	as blobs for the purpose of keeping memory usage low. In the second are saved the data from memory as blobs in case
+	the app closes or goes to the background.
+	 */
 	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultCallback): void {
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + DatabaseTable.DATA + "' (dataPackage BLOB);", [],
 			(transaction: iTransaction, _result: any) => {

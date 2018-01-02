@@ -12,8 +12,7 @@ export interface iDataManager {
 	closeDatabase(name: string, errorCallback: ErrorCallback): void;
 	getClientPeripherals(): Array<PeripheralPartsContainer>;
 	getServerPeripherals(): Array<PeripheralPartsContainer>;
-	addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void;
-	addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void;
+	addPeripheralToMemory(peripheralPartsContainer: PeripheralPartsContainer): void;
 	createDbTables(peripheral: iPeripheral, transaction: iTransaction, callback: QueryResultCallback): void;
 	insertDataIntoDataTable(peripheral: iPeripheral, data: Array<UserDataStructure>, transaction: iTransaction,
 							callback: QueryResultCallback): void;

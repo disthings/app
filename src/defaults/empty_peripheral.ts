@@ -1,9 +1,13 @@
 import {iClientPeripheral} from "../model/i_client_peripheral";
-import {iTransaction} from "../model/i_transaction";
-import {DataSet, PeripheralType, QueryResultCallback, RequestDataPackage, UserDataStructure} from "../types";
+import {PeripheralType, RequestDataPackage, UserDataStructure} from "../types";
 import {iServerPeripheral} from "../model/i_server_peripheral";
 import {Peripheral} from "../model/peripheral";
+import {DefaultValues} from "./default_values";
 
+/*
+This is a default implementation of the class Peripheral, used for avoiding null.
+It should be used only for testing purposes or for initializing an variable.
+ */
 export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iServerPeripheral {
 
 	constructor(name: string, type: PeripheralType) {
@@ -13,14 +17,6 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 
 	getOldData(): UserDataStructure {
 		return {};
-	}
-
-	emptyDataTable(_transaction: iTransaction, _callback: QueryResultCallback): void {
-		return;
-	}
-
-	createDbTables(_transaction: iTransaction, _callback: QueryResultCallback): void {
-		return;
 	}
 
 	readPeripheralData(): void {
@@ -39,18 +35,8 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 		return {};
 	}
 
-	removeOldData(): void {
-		return;
-	}
-
 	getRequestDataPackage(): RequestDataPackage {
-		return {
-			name: "EmptyPeripheral",
-			timestamp: -1,
-			data: {},
-			peripheralType: PeripheralType.EMPTY,
-			dataSet: DataSet.NONE
-		};
+		return DefaultValues.REQUEST_DATA_PACKAGE;
 	}
 
 	deleteOldDataFromMemory(): void {

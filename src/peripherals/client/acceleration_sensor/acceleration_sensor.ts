@@ -12,10 +12,8 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 		super(name, type);
 
 		this.accelerationObservable = new Sensors.Accelerometer({
-			updateInterval: 100, // defaults to 100ms
+			updateInterval: 2000, // defaults to 100ms
 		});
-
-		this.readPeripheralData();
 	}
 
 	readPeripheralData(): void {

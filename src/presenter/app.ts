@@ -1,6 +1,6 @@
 import {iApp} from "./i_app";
-import {iSyncManager} from "../model/i_sync_manager";
-import {SyncManager} from "../model/sync_manager";
+import {iSyncManager} from "../model/i_synchronization_manager";
+import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
 import {Message, QueryResultCallback, UserDataStructure} from "../types";
@@ -176,7 +176,7 @@ export class App implements iApp {
 
 		let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
 
-		this.dataManager.addClientPeripheral(peripheralPartsContainer);
+		this.dataManager.addPeripheralToMemory(peripheralPartsContainer);
 
 		const db: iSQLiteDatabase = this.dataManager.createDatabase(peripheral.getName());
 
@@ -202,7 +202,7 @@ export class App implements iApp {
 			});
 		}, this.subscriberID);
 
-		this.dataManager.addServerPeripheral(peripheralPartsContainer);
+		this.dataManager.addPeripheralToMemory(peripheralPartsContainer);
 		this.stopWaitingForServer();
 	}
 

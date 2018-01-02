@@ -2,6 +2,9 @@ import {
 	PeripheralType, Subscriber, UserDataStructure, DataSet, RequestDataPackage
 } from "../types";
 
+/*
+
+ */
 export abstract class Peripheral {
 
 	private name: string;
@@ -38,7 +41,7 @@ export abstract class Peripheral {
 	}
 
 	unsubscribeFromEvent(eventName: string, id: string): void {
-		if(!(eventName in this.subscribers)) {
+		if(!this.subscribers.get(eventName)) {
 			console.error("No such event: " + eventName);
 		}
 		else {

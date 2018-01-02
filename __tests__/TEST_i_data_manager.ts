@@ -12,7 +12,7 @@ const dm: iDataManager = new DataManager();
 const mp_2: Peripheral = new EmptyPeripheral("Mocked_Peripheral_2", PeripheralType.CLIENT);
 const data: any = ["DATA"];
 
-dm.addClientPeripheral({
+dm.addPeripheralToMemory({
 	key: "Mocked_Peripheral_2",
 	peripheral: mp_2,
 	view: EmptyView,

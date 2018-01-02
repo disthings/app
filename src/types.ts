@@ -101,7 +101,10 @@ export type PeripheralTileState = {windowDimensions: ScaledSize};
 
 export type PeripheralTileDataClass = typeof PeripheralTileData;
 
-export type PeripheralTileDataProps = {peripheral: Peripheral; subscribeToLayoutChange: (callback: Function, id: string) => void;};
+export type PeripheralTileDataProps = {
+	peripheral: Peripheral;
+	subscribeToLayoutChange: (callback: Function, id: string) => void;
+};
 
 export type PeripheralTileDataState = {data: any; windowDimensions: ScaledSize};
 

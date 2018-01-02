@@ -19,6 +19,4 @@ export class AccelerationSensorTileData<K extends PeripheralTileDataProps, L ext
 				<Text>{text}</Text>
 			</View>);
 	}
-
-
 }

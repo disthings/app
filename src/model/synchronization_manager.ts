@@ -1,4 +1,4 @@
-import {iSyncManager} from "./i_sync_manager";
+import {iSyncManager} from "./i_synchronization_manager";
 import {MessageCallback, Settings, Subscriber} from "../types";
 import {Message} from "../types";
 import {SettingsManager} from "./settings_manager";
@@ -109,11 +109,7 @@ export class SyncManager implements iSyncManager {
 	}
 
 	private getIncomingMessageSubscribers(messageType: string): Array<Subscriber> {
-		let subscribers: Array<Subscriber> = this.incomingMessageSubscribers.get(messageType) as Array<Subscriber>;
-		if(!subscribers) {
-			subscribers = [];
-		}
-		return subscribers;
+		return this.incomingMessageSubscribers.get(messageType) as Array<Subscriber>;
 	}
 
 	private tryToConnect(): void {

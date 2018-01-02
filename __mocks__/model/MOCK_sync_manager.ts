@@ -1,4 +1,4 @@
-import {iSyncManager} from "../../src/model/i_sync_manager";
+import {iSyncManager} from "../../src/model/i_synchronization_manager";
 import {MessageCallback, Settings, Subscriber, Message} from "../../src/types";
 import {SettingsManager} from "./MOCK_settings_manager";
 import * as WebSocket from "ws";
