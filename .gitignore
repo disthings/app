@@ -59,4 +59,10 @@ fastlane/screenshots
 src/**/*.js
 src/**/*.jsx
 src/**/*.js.map
+__mocks__/**/*.js
+__mocks__/**/*.jsx
+__mocks__/**/*.js.map
+__tests__/**/*.js
+__tests__/**/*.jsx
+__tests__/**/*.js.map
 !src/js_to_typescript_adapters/*.js
