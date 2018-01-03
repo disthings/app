@@ -16,11 +16,15 @@ export enum ViewType {MAIN = "MAIN", PERIPHERAL = "PERIPHERAL", SETTINGS = "SETT
 export enum DatabaseTable {DATA = "DATA", BACKUP = "BACKUP"}
 
 // generic
+export type ObjectLiteral<T> = {[key: string]: T};
+
+export type Iterable<T> = Array<T> | ObjectLiteral<T>;
+
 export type Message = {data: Array<any>; type: string;};
 
 export type MessageCallback = (message: Message) => void;
 
-export type Subscriber = {callback: SpreadArgumentsCallback; id: string};
+export type Subscriber = {callback: SingleArgumentCallback; id: string};
 
 export type PeripheralPartsContainer = {peripheral: Peripheral | iPeripheral; view: Function; tile: Function; key: string};
 
@@ -30,7 +34,7 @@ export type ResponseDataPackage = {name: string; data: any; peripheralType: Peri
 
 export type ErrorCallback = (error: Error) => void;
 
-export type SpreadArgumentsCallback = (...args: Array<any>) => void;
+export type SingleArgumentCallback = (args?: any) => void;
 
 export type WebSocketStartingSettings = {
 	readonly host: string;
@@ -62,6 +66,11 @@ export type Settings = {
 };
 
 export type UserDataStructure = any;
+
+export type Command = {
+	commandName: string,
+	commandData: any
+};
 
 // sqLite
 export type TransactionCallback = (transaction: iTransaction) => void;

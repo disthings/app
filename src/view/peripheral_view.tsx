@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Peripheral} from "../model/peripheral";
-import {PeripheralViewProps, PeripheralViewState, SpreadArgumentsCallback} from "../types";
+import {PeripheralViewProps, PeripheralViewState, SingleArgumentCallback} from "../types";
 
 export abstract class PeripheralView<K extends PeripheralViewProps, L extends PeripheralViewState>
 	extends React.Component<PeripheralViewProps, PeripheralViewState> {
@@ -28,7 +28,7 @@ export abstract class PeripheralView<K extends PeripheralViewProps, L extends Pe
 		this.peripheral.unsubscribeFromEvent("newViewData", this.subscriberID);
 	}
 
-	subscribeToEvent(eventName: string, callback: SpreadArgumentsCallback, id: string): void {
+	subscribeToEvent(eventName: string, callback: SingleArgumentCallback, id: string): void {
 		this.peripheral.subscribeToEvent(eventName, callback, id);
 	}
 	unsubscribeFromEvent(eventName: string, id: string): void {

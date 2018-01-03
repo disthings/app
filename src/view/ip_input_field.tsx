@@ -1,8 +1,8 @@
 import * as React from "react";
 import {View, TextInput, Text, TouchableOpacity, StyleSheet} from "react-native";
 import {IPInputFieldProps, IPInputFieldState} from "../types";
-import {IPValidator} from "../ip_validator";
 import {Toast} from "../js_to_typescript_adapters/react_native_root_toast";
+import {isValidIPv4} from "../generic_functions";
 
 export class IPInputField<K extends IPInputFieldProps, L extends IPInputFieldState>
 	extends React.Component<IPInputFieldProps, IPInputFieldState> {
@@ -30,7 +30,7 @@ export class IPInputField<K extends IPInputFieldProps, L extends IPInputFieldSta
 							<Text style={styles.text}>Cancel</Text>
 						</TouchableOpacity>
 						<TouchableOpacity onPress={() => {
-							if(IPValidator.isValidIPv4(this.state.text.trim())) {
+							if(isValidIPv4(this.state.text.trim())) {
 								this.props.setNewIP(this.state.text.trim());
 							}
 							else {

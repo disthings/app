@@ -128,8 +128,8 @@ export class DataManager implements iDataManager {
 		this.insertDataIntoDb(peripheral, DatabaseTable.DATA, data, transaction, callback);
 	}
 
-	insertDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							  callback: Function): void {
+	insertPeripheralDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+										callback: Function): void {
 
 		this.insertDataIntoDb(peripheral, DatabaseTable.BACKUP, data, transaction, callback);
 	}
@@ -157,7 +157,7 @@ export class DataManager implements iDataManager {
 		this.restoreAllDataFromTable(peripheral, DatabaseTable.DATA, transaction, callback);
 	}
 
-	restoreAllDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
 		this.restoreAllDataFromTable(peripheral, DatabaseTable.BACKUP, transaction, callback);
 	}
 

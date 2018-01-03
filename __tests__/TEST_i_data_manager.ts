@@ -6,7 +6,7 @@ import {EmptyView} from "../src/defaults/empty_view";
 import {EmptyPeripheral} from "../src/defaults/empty_peripheral";
 import {Peripheral} from "../src/model/peripheral";
 import {PeripheralType} from "../src/types";
-import {DefaultValues} from "../src/defaults/default_values";
+import {errorCallback} from "../src/generic_functions";
 
 const dm: iDataManager = new DataManager();
 const mp_2: Peripheral = new EmptyPeripheral("Mocked_Peripheral_2", PeripheralType.CLIENT);
@@ -34,7 +34,7 @@ test("Create db tables", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
 		dm.createDbTables(mp_2, tx, (_result: any) => {
 
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -45,7 +45,7 @@ test("Create db tables", (done: Function) => {
 test("Insert data into data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
 		dm.insertDataIntoDataTable(mp_2, data, tx, (_result: any) => {
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -55,8 +55,8 @@ test("Insert data into data_table", (done: Function) => {
 
 test("insert data into backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.insertDataIntoBackupTable(mp_2, data, tx, (_result: any) => {
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+		dm.insertPeripheralDataIntoBackupTable(mp_2, data, tx, (_result: any) => {
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -68,7 +68,7 @@ test("restore all data from data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
 		dm.restoreAllDataFromDataTable(mp_2, tx, (result: any) => {
 			expect(result.length).toBeGreaterThan(0);
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -79,9 +79,9 @@ test("restore all data from data_table", (done: Function) => {
 
 test("restore all data from backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.restoreAllDataFromBackupTable(mp_2, tx, (result: any) => {
+		dm.restorePeripheralDataFromBackupTable(mp_2, tx, (result: any) => {
 			expect(result.length).toBeGreaterThan(0);
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -92,7 +92,7 @@ test("restore all data from backup_table", (done: Function) => {
 test("empty data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
 		dm.emptyDataTable(mp_2, tx, (_result: any) => {
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -103,7 +103,7 @@ test("empty data_table", (done: Function) => {
 test("empty backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
 		dm.emptyBackupTable(mp_2, tx, (_result: any) => {
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -115,7 +115,7 @@ test("restore all data from empty data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
 		dm.restoreAllDataFromDataTable(mp_2, tx, (result: any) => {
 			expect(result.length).toBe(0);
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -126,9 +126,9 @@ test("restore all data from empty data_table", (done: Function) => {
 
 test("restore all data from empty backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.restoreAllDataFromBackupTable(mp_2, tx, (result: any) => {
+		dm.restorePeripheralDataFromBackupTable(mp_2, tx, (result: any) => {
 			expect(result.length).toBe(0);
-			tx.commit(DefaultValues.ERROR_CALLBACK);
+			tx.commit(errorCallback);
 			done();
 		});
 	}, (error: Error) => {
@@ -137,5 +137,5 @@ test("restore all data from empty backup_table", (done: Function) => {
 });
 
 test("close database", () => {
-	dm.closeDatabase("Mocked_Peripheral_2", DefaultValues.ERROR_CALLBACK);
+	dm.closeDatabase("Mocked_Peripheral_2", errorCallback);
 });

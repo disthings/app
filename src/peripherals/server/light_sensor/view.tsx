@@ -23,14 +23,17 @@ export class LightView<K extends PeripheralViewProps, L extends PeripheralViewSt
 		return (<View>
 			<Text>Level: {value}</Text>
 			<Button onPress={() => {
-				this.props.peripheral.sendCommand(this.state.status.isOn ? "off" : "on", {});
+				this.props.peripheral.sendCommand({
+					commandName: this.state.status.isOn ? "off" : "on",
+					commandData: {}
+				});
 				this.setState({
 					status: {
 						isOn: !this.state.status.isOn
 					}
 				});
 			}}
-					title={this.state.status.isOn ? "off" : "on"}/>
+				title={this.state.status.isOn ? "off" : "on"}/>
 		</View>);
 	}
 }

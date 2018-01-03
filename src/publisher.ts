@@ -1,4 +1,4 @@
-import {SpreadArgumentsCallback, Subscriber} from "./types";
+import {SingleArgumentCallback, Subscriber} from "./types";
 
 export class Publisher {
 
@@ -8,7 +8,7 @@ export class Publisher {
 		this.subscribers = new Map<string, Array<Subscriber>>();
 	}
 
-	subscribeToEvent(eventName: string, callback: SpreadArgumentsCallback, subscriberID: string): void {
+	subscribeToEvent(eventName: string, callback: SingleArgumentCallback, subscriberID: string): void {
 		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 
 		if(!subs) {
@@ -35,7 +35,7 @@ export class Publisher {
 		}
 	}
 
-	informEventSubscribers(eventName: string, ...args: Array<any>): void {
+	informEventSubscribers(eventName: string, args?: any): void {
 		const subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 
 		if(subs) {

@@ -1,6 +1,7 @@
 import {
-	PeripheralType, Subscriber, UserDataStructure, DataSet, RequestDataPackage, SpreadArgumentsCallback
+	PeripheralType, UserDataStructure, DataSet, RequestDataPackage, SingleArgumentCallback, Command
 } from "../types";
+import {Publisher} from "../publisher";
 
 /*
 To create a peripheral, this class must be extended, and one of the iClientPeripheral or iServerPeripheral interfaces
@@ -11,13 +12,13 @@ export abstract class Peripheral {
 
 	private name: string;
 	private type: PeripheralType;
-	private subscribers: Map<string, Array<Subscriber>>;
+	private publisher: Publisher;
 	private data: Array<UserDataStructure>;
 
 	constructor(name: string, type: PeripheralType) {
 		this.name = name;
 		this.type = type;
-		this.subscribers = new Map<string, Array<Subscriber>>();
+		this.publisher = new Publisher();
 		this.data = [];
 	}
 
@@ -36,46 +37,27 @@ export abstract class Peripheral {
 	/*
 	Use this to subscribe to some peripheral related event.
 	 */
-	subscribeToEvent(eventName: string, callback: SpreadArgumentsCallback, subscriberID: string): void {
-		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
-		if(!subs) {
-			subs = [];
-			this.subscribers.set(eventName, subs);
-		}
-		subs.push({callback: callback, id: subscriberID});
+	subscribeToEvent(eventName: string, callback: SingleArgumentCallback, subscriberID: string): void {
+		this.publisher.subscribeToEvent(eventName, callback, subscriberID);
 	}
 
 	/*
 	Use this to unsubscribe to some peripheral related event.
 	 */
 	unsubscribeFromEvent(eventName: string, subscriberID: string): void {
-		if(!this.subscribers.get(eventName)) {
-			console.error("No such event: " + eventName);
+		if(!this.publisher.getEventSubscribers(eventName)) {
+			console.error(new Error("No such event: " + eventName));
 		}
 		else {
-			let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
-			let i: number = 0;
-			let found: boolean = false;
-			while(!found && i < subs.length) {
-				if(found = subs[i].id === subscriberID) {
-					subs.splice(i, 1);
-				}
-				i++;
-			}
+			this.publisher.unsubscribeFromEvent(eventName, subscriberID);
 		}
 	}
 
 	/*
 	Use this to call the callbacks of all subscribers of an event. Pass any further arguments using the ...args.
 	 */
-	protected informEventSubscribers(eventName: string, ...args: Array<any>): void {
-		const subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
-
-		if(subs) {
-			subs.forEach((sub: Subscriber) => {
-				sub.callback(args);
-			});
-		}
+	protected informEventSubscribers(eventName: string, args?: any): void {
+		this.publisher.informEventSubscribers(eventName, args);
 	}
 
 	/*
@@ -89,8 +71,8 @@ export abstract class Peripheral {
 		this.informEventSubscribers("newTileData");
 	}
 
-	sendCommand(commandName: string, commandData: any): void {
-		this.informEventSubscribers("command", commandName, commandData);
+	sendCommand(command: Command): void {
+		this.informEventSubscribers("command", command);
 	}
 
 	initializeData(): void {
@@ -98,7 +80,7 @@ export abstract class Peripheral {
 	}
 
 	/*
-	This method is being called for requesting data for server peripherals.
+	This method creates a package useful for the server to identify the peripheral being requested.
 	 */
 	getRequestDataPackage(): RequestDataPackage {
 		return {

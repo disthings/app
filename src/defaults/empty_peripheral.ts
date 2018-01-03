@@ -5,7 +5,7 @@ import {Peripheral} from "../model/peripheral";
 
 /*
 This is a default implementation of the class Peripheral, used for avoiding null.
-It should be used only for testing purposes or for initializing an variable.
+It should be used only for testing purposes or for initializing a variable.
  */
 export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iServerPeripheral {
 

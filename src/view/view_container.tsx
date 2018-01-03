@@ -6,8 +6,7 @@ import {MainView} from "./main_view";
 import {iApp} from "../presenter/i_app";
 import {SettingsView} from "./settings_view";
 import {
-	PeripheralPartsContainer, PeripheralType, ViewType, ViewContainerState, Subscriber,
-	PeripheralViewClass, SpreadArgumentsCallback
+	PeripheralPartsContainer, ViewType, ViewContainerState, Subscriber,	PeripheralViewClass, SingleArgumentCallback
 } from "../types";
 import {peripherals} from "../peripherals/peripherals_declaration";
 import {ReactNode} from "react";
@@ -41,13 +40,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		this.onLayoutChangeSubscribers = [];
 
 		peripherals.forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
-			let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
-			if(peripheral.getType() === PeripheralType.CLIENT) {
-				this.app.addClientPeripheral(peripheralPartsContainer);
-			}
-			else {
-				this.app.addServerPeripheral(peripheralPartsContainer);
-			}
+			this.app.addPeripheral(peripheralPartsContainer);
 		});
 	}
 
@@ -69,13 +62,13 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		});
 
 		AppState.removeEventListener("change", (newState: string) => {
-			this.app.setAppState(newState);
+			this.app.managePeripheralDataBasedOnState(newState);
 		});
 	}
 
 	componentDidMount(): void {
 		AppState.addEventListener("change", (newState: string) => {
-			this.app.setAppState(newState);
+			this.app.managePeripheralDataBasedOnState(newState);
 		});
 	}
 
@@ -104,7 +97,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		});
 	}
 
-	subscribeToLayoutChange(callback: SpreadArgumentsCallback, id: string): void {
+	subscribeToLayoutChange(callback: SingleArgumentCallback, id: string): void {
 		this.onLayoutChangeSubscribers.push({
 			callback: callback,
 			id: id
@@ -173,7 +166,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 			else {
 				return (<View style={styles.IPview} onLayout={this.onLayout.bind(this)}>
 					<IPInputField setNewIP={(ip: string) => {
-						this.app.setNewIP(ip);
+						this.app.setConnectingIP(ip);
 						this.setState({
 							hasIPAddress: true
 						});

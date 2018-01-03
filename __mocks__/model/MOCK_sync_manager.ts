@@ -1,5 +1,5 @@
 import {iSyncManager} from "../../src/model/i_synchronization_manager";
-import {MessageCallback, Settings, Subscriber, Message, SpreadArgumentsCallback} from "../../src/types";
+import {MessageCallback, Settings, Subscriber, Message, SingleArgumentCallback} from "../../src/types";
 import {SettingsManager} from "./MOCK_settings_manager";
 import * as WebSocket from "ws";
 
@@ -60,7 +60,7 @@ export class SyncManager implements iSyncManager {
 		subs.push({"callback": callback, "id": id});
 	}
 
-	onSocketReady(callback: SpreadArgumentsCallback, id: string): void {
+	onSocketReady(callback: SingleArgumentCallback, id: string): void {
 		let subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketReady");
 		if(!subs) {
 			subs = [];
@@ -69,7 +69,7 @@ export class SyncManager implements iSyncManager {
 		subs.push({"callback": callback, "id": id});
 	}
 
-	onSocketDisconnect(callback: SpreadArgumentsCallback, id: string): void {
+	onSocketDisconnect(callback: SingleArgumentCallback, id: string): void {
 		let subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketDisconnect");
 		if(!subs) {
 			subs = [];

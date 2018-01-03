@@ -9,14 +9,18 @@ import {
 	ResponseDataPackage, Settings, ViewType
 } from "../types";
 import {iSQLiteDatabase} from "../model/i_sqlite_database";
-import {forEachAsync} from "../forEachAsync";
 import {iTransaction} from "../model/i_transaction";
 import Timer = NodeJS.Timer;
 import {DefaultValues} from "../defaults/default_values";
 import {Peripheral} from "../model/peripheral";
 import {SettingsManager} from "../model/settings_manager";
 import {StartingSettings} from "../starting_settings";
+import {forEachAsync} from "../generic_functions";
 
+/*
+This class manages the communication between the backend and the frontend. It is responsible for the activation of
+the synchronization, as well as sending the data to memory or the database.
+ */
 export class App implements iApp {
 
 	private syncManager: iSyncManager;
@@ -53,21 +57,23 @@ export class App implements iApp {
 			}
 			else {
 				this.settings = SettingsManager.getStartingSettings();
-				SettingsManager.setRuntimeSettings(this.settings, (_error: Error) => {
-					console.log(_error);
+				SettingsManager.resetSettings((_error: Error) => {
+					console.error(_error);
 				});
 			}
 
 			this.maxTryCounter = this.settings.maxTryCounter;
 			this.dataRequestInterval = this.settings.dataRequestInterval;
 			this.didSettingsLoad = true;
-			this.onReadyToRenderCallback(this.settings.webSocket.host);
+
+			if(this.onReadyToRenderCallback) {
+				this.onReadyToRenderCallback(this.settings.webSocket.host);
+			}
 
 			if(this.settings.webSocket.host) {
 				this.activateSynchronization();
 			}
 		});
-
 	}
 
 	private activateSynchronization(): void {
@@ -96,13 +102,18 @@ export class App implements iApp {
 
 	private activateInterval(): void {
 		this.isWaiting = false;
-		this.takeViewAction();
+		this.decideViewAction();
 		this.loopID = setInterval(() => {
-			this.takeViewAction();
+			this.decideViewAction();
 		}, this.dataRequestInterval);
 	}
 
-	private takeViewAction(): void {
+	private deactivateInterval(): void {
+		clearInterval(this.loopID);
+		delete this.loopID;
+	}
+
+	private decideViewAction(): void {
 		switch (this.currentViewType) {
 			case ViewType.MAIN:
 				this.takeMainViewAction();
@@ -116,39 +127,28 @@ export class App implements iApp {
 
 				break;
 			default:
-				console.error("No such screen");
+				console.error(new Error("No such screen"));
 		}
-	}
-
-	private deactivateInterval(): void {
-		clearInterval(this.loopID);
-		delete this.loopID;
 	}
 
 	private takeMainViewAction(): void {
-		if(this.isReadyForInterval()) {
-			this.waitForServer();
-			this.getServerAllPeripheralsData();
-		}
-		else if(this.isSocketReady) {
-			this.tryCounter++;
-		}
-
-		if(this.tryCounter === this.maxTryCounter && this.isSocketReady) {
-			this.stopWaitingForServer();
-			this.tryCounter = 0;
-		}
+		this.takeViewAction(this.getServerAllPeripheralsData.bind(this));
 	}
 
 	private takeServerPeripheralViewAction(): void {
+		this.takeViewAction(this.getServerPeripheralData.bind(this));
+	}
+
+	private takeViewAction(viewAction: Function): void {
 		if(this.isReadyForInterval()) {
 			this.waitForServer();
-			this.getServerPeripheralViewData();
+			viewAction();
 		}
 		else if(this.isSocketReady) {
-			this.tryCounter++;
+			this.tryCounter++; // increment the try counter to increase the waiting time between retries
 		}
 
+		// after some time stop waiting to enable a retry
 		if(this.tryCounter === this.maxTryCounter && this.isSocketReady) {
 			this.stopWaitingForServer();
 			this.tryCounter = 0;
@@ -163,7 +163,7 @@ export class App implements iApp {
 		this.isWaiting = true;
 	}
 
-	isReadyForInterval(): boolean {
+	private isReadyForInterval(): boolean {
 		return this.isSocketReady && !this.isWaiting && this.didSettingsLoad;
 	}
 
@@ -171,7 +171,20 @@ export class App implements iApp {
 		this.onReadyToRenderCallback = callback;
 	}
 
-	addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+		const type: PeripheralType = (peripheralPartsContainer.peripheral as Peripheral).getType();
+		if(type === PeripheralType.SERVER) {
+			this.addServerPeripheral(peripheralPartsContainer);
+		}
+		else if(type === PeripheralType.CLIENT) {
+			this.addClientPeripheral(peripheralPartsContainer);
+		}
+		else {
+			console.error(new Error("Invalid peripheral type: " + type));
+		}
+	}
+
+	private addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
 		this.waitForServer();
 
 		let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
@@ -182,7 +195,7 @@ export class App implements iApp {
 
 		db.transaction((transaction: iTransaction) => {
 
-			this.dataManager.createDbTables(peripheral, transaction, (_transaction: iTransaction, _result: any) => {
+			this.dataManager.createDbTables(peripheral, transaction, () => {
 				this.stopWaitingForServer();
 			});
 		}, (error: Error) => {
@@ -190,7 +203,7 @@ export class App implements iApp {
 		});
 	}
 
-	addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+	private addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
 		this.waitForServer();
 
 		let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
@@ -213,7 +226,9 @@ export class App implements iApp {
 		let arrayLength: number = arrayToBeSearched.length;
 		let i: number = 0;
 
-		peripheral.unsubscribeFromEvent("command", this.subscriberID);
+		if(peripheral.getType() === PeripheralType.SERVER) {
+			peripheral.unsubscribeFromEvent("command", this.subscriberID);
+		}
 
 		while (!found && i < arrayLength) {
 			let peripheralParts: PeripheralPartsContainer = arrayToBeSearched[i];
@@ -240,7 +255,7 @@ export class App implements iApp {
 				arrayToBeSearched = this.getServerPeripherals();
 				break;
 			default:
-				console.error("No such peripheral type.");
+				console.error(new Error("No such peripheral type."));
 		}
 
 		return arrayToBeSearched;
@@ -277,7 +292,7 @@ export class App implements iApp {
 
 	private sendClientPeripheralsData(_receivedMessage: Message): void {
 
-		this.getClientAllPeripheralsViewData((data: any) => {
+		this.getClientAllPeripheralsData((data: any) => {
 			const message: Message = {
 				"type": "clientAllPeripheralsData",
 				"data": data
@@ -308,13 +323,14 @@ export class App implements iApp {
 		});
 	}
 
-	private getClientAllPeripheralsViewData(callback: Function): void {
+	private getClientAllPeripheralsData(callback: Function): void {
 
 		const responseDataPackages: Array<ResponseDataPackage> = [];
 		const clientPeripherals: Array<PeripheralPartsContainer> = this.getClientPeripherals();
 
 
-		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer, _indexOrKey: number | string, next: () => void) => {
+		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer,
+													   _indexOrKey: number | string, next: () => void) => {
 
 			let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
 			let peripheralName: string = peripheral.getName();
@@ -335,14 +351,14 @@ export class App implements iApp {
 				});
 
 				}, (error: Error) => {
-				console.error("getClientAllPeripheralsViewData", error);
+				console.error("getClientAllPeripheralsData", error);
 			});
 		},() => {
 			callback(responseDataPackages);
 		});
 	}
 
-	private getServerPeripheralViewData(): void {
+	private getServerPeripheralData(): void {
 		this.syncManager.sendMessage({
 			"type": "getServerPeripheralData",
 			"data": [{
@@ -355,20 +371,13 @@ export class App implements iApp {
 		});
 	}
 
-	// private getClientPeripheralFromName(name: string): Peripheral {
-	// 	const peripheralContainer: PeripheralPartsContainer = this.getPeripheralPartsContainerFromName(name, PeripheralType.CLIENT);
-	// 	return peripheralContainer.peripheral as Peripheral;
-	// }
-
 	private getPeripheralPartsContainerFromName(name: string, peripheralType: PeripheralType): PeripheralPartsContainer {
 		let found: boolean = false;
-		const arrayLength: number = this.getClientPeripherals().length;
 		let i: number = 0;
 		let foundPeripheralParts: PeripheralPartsContainer = DefaultValues.PERIPHERAL_PARTS_CONTAINER;
 		const arrayToSearch: Array<PeripheralPartsContainer> = this.getArrayBasedOnPeripheralType(peripheralType);
 
-
-		while (!found && i < arrayLength) {
+		while (!found && i < arrayToSearch.length) {
 			let peripheralParts: PeripheralPartsContainer = arrayToSearch[i];
 			let currentPeripheral: Peripheral = peripheralParts.peripheral as Peripheral;
 			if (found = currentPeripheral.getName() === name) {
@@ -422,7 +431,7 @@ export class App implements iApp {
 		this.currentPeripheral = peripheral;
 	}
 
-	setNewIP(ip: string): void {
+	setConnectingIP(ip: string): void {
 		const host: string = "ws://" + ip;
 		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
 			const currentSettings: Settings = result;
@@ -434,7 +443,11 @@ export class App implements iApp {
 		});
 	}
 
-	setAppState(state: string): void {
+	/*
+	This function backs up or restores from the backup table the clients' peripheral data, based on the state of the
+	app. Possible states are active and inactive.
+	 */
+	managePeripheralDataBasedOnState(state: string): void {
 		this.getClientPeripherals().forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
 
 			const backupDB: iSQLiteDatabase = this.dataManager.getDatabase(peripheralPartsContainer.key);
@@ -443,7 +456,7 @@ export class App implements iApp {
 			backupDB.transaction((backupTransaction: iTransaction) => {
 
 				if (state === "active") {
-					this.dataManager.restoreAllDataFromBackupTable(peripheral, backupTransaction,
+					this.dataManager.restorePeripheralDataFromBackupTable(peripheral, backupTransaction,
 						(backupTransaction: iTransaction, result: Array<UserDataStructure>) => {
 
 						if (result) {
@@ -456,9 +469,8 @@ export class App implements iApp {
 				}
 				else {
 					// todo peripheral and peripheral.getData()
-					this.dataManager.insertDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction,
-						(_transaction: iTransaction, _results: any) => {
-
+					this.dataManager.insertPeripheralDataIntoBackupTable(peripheral, peripheral.getData(),
+						backupTransaction, () => {
 						peripheral.initializeData();
 					});
 				}

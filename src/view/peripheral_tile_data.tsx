@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Peripheral} from "../model/peripheral";
-import {PeripheralTileDataProps, PeripheralTileDataState, SpreadArgumentsCallback} from "../types";
+import {PeripheralTileDataProps, PeripheralTileDataState, SingleArgumentCallback} from "../types";
 import {Dimensions} from "react-native";
 
 export abstract class PeripheralTileData<K extends PeripheralTileDataProps, L extends PeripheralTileDataState>
@@ -29,7 +29,7 @@ export abstract class PeripheralTileData<K extends PeripheralTileDataProps, L ex
 		this.peripheral.unsubscribeFromEvent("newTileData", this.subscriberID);
 	}
 
-	subscribeToEvent(eventName: string, callback: SpreadArgumentsCallback, id: string): void {
+	subscribeToEvent(eventName: string, callback: SingleArgumentCallback, id: string): void {
 		this.peripheral.subscribeToEvent(eventName, callback, id);
 	}
 	unsubscribeFromEvent(eventName: string, id: string): void {

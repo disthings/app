@@ -16,10 +16,10 @@ export interface iDataManager {
 	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
 							callback: Function): void;
-	insertDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
-							  callback: Function): void;
+	insertPeripheralDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+										callback: Function): void;
 	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
-	restoreAllDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
+	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
 	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 }

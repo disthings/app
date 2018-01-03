@@ -8,13 +8,13 @@ import {
 	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
-import {forEachAsync} from "../../src/forEachAsync";
 import Timer = NodeJS.Timer;
 import {DefaultValues} from "../../src/defaults/default_values";
 import {Peripheral} from "../../src/model/peripheral";
 import {SettingsManager} from "../model/MOCK_settings_manager";
 import {StartingSettings} from "../../src/starting_settings";
 import {iTransaction} from "../model/MOCK_i_transaction";
+import {forEachAsync} from "../../src/generic_functions";
 
 export class App implements iApp {
 
@@ -172,7 +172,20 @@ export class App implements iApp {
 		this.onReadyToRenderCallback = callback;
 	}
 
-	addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+		const type: PeripheralType = (peripheralPartsContainer.peripheral as Peripheral).getType();
+		if(type === PeripheralType.SERVER) {
+			this.addServerPeripheral(peripheralPartsContainer);
+		}
+		else if(type === PeripheralType.CLIENT) {
+			this.addClientPeripheral(peripheralPartsContainer);
+		}
+		else {
+			console.error(new Error("Invalid peripheral type: " + type));
+		}
+	}
+
+	private addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
 		this.waitForServer();
 
 		let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
@@ -195,7 +208,7 @@ export class App implements iApp {
 		});
 	}
 
-	addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+	private addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
 		this.waitForServer();
 
 		let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
@@ -218,7 +231,9 @@ export class App implements iApp {
 		let arrayLength: number = arrayToBeSearched.length;
 		let i: number = 0;
 
-		peripheral.unsubscribeFromEvent("command", this.subscriberID);
+		if(peripheral.getType() === PeripheralType.SERVER) {
+			peripheral.unsubscribeFromEvent("command", this.subscriberID);
+		}
 
 		while (!found && i < arrayLength) {
 			let peripheralParts: PeripheralPartsContainer = arrayToBeSearched[i];
@@ -318,8 +333,8 @@ export class App implements iApp {
 		const responseDataPackages: Array<ResponseDataPackage> = [];
 		const clientPeripherals: Array<PeripheralPartsContainer> = this.getClientPeripherals();
 
-
-		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer, _indexOrKey: number | string, next: () => void) => {
+		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer,
+													   _indexOrKey: number | string, next: () => void) => {
 
 			let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
 			let peripheralName: string = peripheral.getName();
@@ -336,14 +351,14 @@ export class App implements iApp {
 
 					this.dataManager.emptyDataTable(peripheral, transaction, () => {
 						transaction.commit((error: Error) => {
-							console.error("getClientAllPeripheralsViewData 1", error);
+							console.error("getClientAllPeripheralsData 1", error);
 						});
 						next();
 					});
 				});
 
 			}, (error: Error) => {
-				console.error("getClientAllPeripheralsViewData 2", error);
+				console.error("getClientAllPeripheralsData 2", error);
 			});
 		},() => {
 			callback(responseDataPackages);
@@ -430,7 +445,7 @@ export class App implements iApp {
 		this.currentPeripheral = peripheral;
 	}
 
-	setNewIP(ip: string): void {
+	setConnectingIP(ip: string): void {
 		const host: string = "ws://" + ip;
 		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
 			const currentSettings: Settings = result;
@@ -442,7 +457,7 @@ export class App implements iApp {
 		});
 	}
 
-	setAppState(state: string): void {
+	managePeripheralDataBasedOnState(state: string): void {
 		this.getClientPeripherals().forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
 
 			const backupDB: iSQLiteDatabase = this.dataManager.getDatabase(peripheralPartsContainer.key);
@@ -451,14 +466,14 @@ export class App implements iApp {
 			backupDB.transaction((backupTransaction: iTransaction) => {
 
 				if (state === "active") {
-					this.dataManager.restoreAllDataFromBackupTable(peripheral, backupTransaction,
+					this.dataManager.restorePeripheralDataFromBackupTable(peripheral, backupTransaction,
 						(backupTransaction: iTransaction, result: Array<UserDataStructure>) => {
 
 							if (result) {
 								peripheral.setData(peripheral.getData().concat(result));
 								this.dataManager.emptyBackupTable(peripheral, backupTransaction, () => {
 									backupTransaction.commit((error: Error) => {
-										console.log("setAppState 1", error);
+										console.log("managePeripheralDataBasedOnState 1", error);
 									});
 								});
 							}
@@ -466,16 +481,16 @@ export class App implements iApp {
 				}
 				else {
 					// todo peripheral and peripheral.getData()
-					this.dataManager.insertDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction,
+					this.dataManager.insertPeripheralDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction,
 						() => {
 							backupTransaction.commit((error: Error) => {
-								console.log("setAppState 2", error);
+								console.log("managePeripheralDataBasedOnState 2", error);
 							});
 							peripheral.initializeData();
 						});
 				}
 			}, (error: Error) => {
-				console.log("setAppState 3", error);
+				console.log("managePeripheralDataBasedOnState 3", error);
 			});
 		});
 	}
