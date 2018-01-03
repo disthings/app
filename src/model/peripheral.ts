@@ -42,7 +42,7 @@ export abstract class Peripheral {
 	}
 
 	/*
-	Use this to unsubscribe to some peripheral related event.
+	Use this to unsubscribe from some peripheral related event.
 	 */
 	unsubscribeFromEvent(eventName: string, subscriberID: string): void {
 		if(!this.publisher.getEventSubscribers(eventName)) {
@@ -54,9 +54,9 @@ export abstract class Peripheral {
 	}
 
 	/*
-	Use this to call the callbacks of all subscribers of an event. Pass any further arguments using the ...args.
+	Use this to call the callbacks of all subscribers of an event. Pass any further arguments using the args.
 	 */
-	protected informEventSubscribers(eventName: string, args?: any): void {
+	protected informEventSubscribers(eventName: string, args?: {}): void {
 		this.publisher.informEventSubscribers(eventName, args);
 	}
 
@@ -67,8 +67,7 @@ export abstract class Peripheral {
 	 */
 	setData(data: Array<UserDataStructure>): void {
 		this.data = data;
-		this.informEventSubscribers("newViewData");
-		this.informEventSubscribers("newTileData");
+		this.informEventSubscribers("newData");
 	}
 
 	sendCommand(command: Command): void {

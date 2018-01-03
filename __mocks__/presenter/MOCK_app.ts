@@ -57,7 +57,7 @@ export class App implements iApp {
 				});
 			}
 
-			this.maxTryCounter = this.settings.maxTryCounter;
+			this.maxTryCounter = this.settings.maxSkippedIntervals;
 			this.dataRequestInterval = this.settings.dataRequestInterval;
 			this.didSettingsLoad = true;
 			if(this.onReadyToRenderCallback) {

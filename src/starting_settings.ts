@@ -2,11 +2,12 @@ import {DataManagerStartingSettings, WebSocketStartingSettings} from "./types";
 
 export class StartingSettings {
 
-	private static instance: StartingSettings = new StartingSettings();
-
-	readonly maxTryCounter: number = 6;
+	private static instance: StartingSettings = new StartingSettings(); // initialize singleton
 
 	readonly dataRequestInterval: number = 2000;
+	// if the server is not responding after an interval defined above,
+	// wait for so many intervals before requesting again
+	readonly maxSkippedIntervals: number = 6;
 
 	readonly webSocket: WebSocketStartingSettings = {
 		host: "", // the user must define the host

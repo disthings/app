@@ -4,6 +4,9 @@ import {PeripheralTile} from "./peripheral_tile";
 import {MainViewProps, MainViewState} from "../types";
 import {Peripheral} from "../model/peripheral";
 
+/*
+This view contains all the peripherals' tiles.
+ */
 export class MainView<K extends MainViewProps, L extends MainViewState> extends React.Component<MainViewProps, MainViewState> {
 
 	constructor(props: K, state: L) {
@@ -16,6 +19,7 @@ export class MainView<K extends MainViewProps, L extends MainViewState> extends 
 
 	render(): React.ReactNode {
 
+		// map every peripheral to a tile
 		const peripheralTiles: any = this.state.peripherals.map(item => (
 			<PeripheralTile key={(item.peripheral as Peripheral).getName()}
 							subscribeToLayoutChange={this.props.subscribeToLayoutChange}

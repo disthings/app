@@ -14,7 +14,7 @@ import {DefaultValues} from "../defaults/default_values";
 import {Peripheral} from "../model/peripheral";
 import {SettingsManager} from "../model/settings_manager";
 import {StartingSettings} from "../starting_settings";
-import {forEachAsync} from "../generic_functions";
+import {errorCallback, forEachAsync} from "../generic_functions";
 
 /*
 This class manages the communication between the backend and the frontend. It is responsible for the activation of
@@ -31,7 +31,7 @@ export class App implements iApp {
 	private didSettingsLoad: boolean;
 	private tryCounter: number = 0;
 	private loopID: Timer;
-	private maxTryCounter: number;
+	private maxSkippedIntervals: number;
 	private dataRequestInterval: number;
 	private subscriberID: string;
 	private settings: StartingSettings;
@@ -56,12 +56,10 @@ export class App implements iApp {
 			}
 			else { // get the initial settings
 				this.settings = SettingsManager.getStartingSettings();
-				SettingsManager.resetSettings((_error: Error) => {
-					console.error(_error);
-				});
+				SettingsManager.resetSettings(errorCallback);
 			}
 
-			this.maxTryCounter = this.settings.maxTryCounter;
+			this.maxSkippedIntervals = this.settings.maxSkippedIntervals;
 			this.dataRequestInterval = this.settings.dataRequestInterval;
 			this.didSettingsLoad = true;
 
@@ -115,11 +113,11 @@ export class App implements iApp {
 	private decideViewAction(): void {
 		switch (this.currentViewType) {
 			case ViewType.MAIN:
-				this.takeMainViewAction();
+				this.takeViewAction(this.getServerAllPeripheralsData.bind(this));
 				break;
 			case ViewType.PERIPHERAL:
 				if(this.currentPeripheral.getType() === PeripheralType.SERVER) {
-					this.takeServerPeripheralViewAction();
+					this.takeViewAction(this.getServerPeripheralData.bind(this));
 				}
 				break;
 			case ViewType.SETTINGS:
@@ -128,14 +126,6 @@ export class App implements iApp {
 			default:
 				console.error(new Error("No such screen"));
 		}
-	}
-
-	private takeMainViewAction(): void {
-		this.takeViewAction(this.getServerAllPeripheralsData.bind(this));
-	}
-
-	private takeServerPeripheralViewAction(): void {
-		this.takeViewAction(this.getServerPeripheralData.bind(this));
 	}
 
 	private takeViewAction(viewAction: Function): void {
@@ -148,7 +138,7 @@ export class App implements iApp {
 		}
 
 		// after some time stop waiting to enable a retry
-		if(this.tryCounter === this.maxTryCounter && this.isSocketReady) {
+		if(this.tryCounter === this.maxSkippedIntervals && this.isSocketReady) {
 			this.stopWaitingForServer();
 			this.tryCounter = 0;
 		}
@@ -170,19 +160,6 @@ export class App implements iApp {
 		this.onReadyToRenderCallback = callback;
 	}
 
-	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-		const type: PeripheralType = (peripheralPartsContainer.peripheral as Peripheral).getType();
-		if(type === PeripheralType.SERVER) {
-			this.addServerPeripheral(peripheralPartsContainer);
-		}
-		else if(type === PeripheralType.CLIENT) {
-			this.addClientPeripheral(peripheralPartsContainer);
-		}
-		else {
-			console.error(new Error("Invalid peripheral type: " + type));
-		}
-	}
-
 	private addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
 		this.waitForServer();
 
@@ -197,9 +174,7 @@ export class App implements iApp {
 			this.dataManager.createDbTables(peripheral, transaction, () => {
 				this.stopWaitingForServer();
 			});
-		}, (error: Error) => {
-			console.error(error);
-		});
+		}, errorCallback);
 	}
 
 	private addServerPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
@@ -216,6 +191,19 @@ export class App implements iApp {
 
 		this.dataManager.addPeripheralToMemory(peripheralPartsContainer);
 		this.stopWaitingForServer();
+	}
+
+	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
+		const type: PeripheralType = (peripheralPartsContainer.peripheral as Peripheral).getType();
+		if(type === PeripheralType.SERVER) {
+			this.addServerPeripheral(peripheralPartsContainer);
+		}
+		else if(type === PeripheralType.CLIENT) {
+			this.addClientPeripheral(peripheralPartsContainer);
+		}
+		else {
+			console.error(new Error("Invalid peripheral type: " + type));
+		}
 	}
 
 	removePeripheral(peripheral: Peripheral): void {
@@ -238,9 +226,7 @@ export class App implements iApp {
 			i++;
 		}
 
-		this.dataManager.closeDatabase(peripheral.getName(), (error: Error) => {
-			console.error(error);
-		});
+		this.dataManager.closeDatabase(peripheral.getName(), errorCallback);
 	}
 
 	private getArrayBasedOnPeripheralType(peripheralType: PeripheralType): Array<PeripheralPartsContainer> {
@@ -348,9 +334,7 @@ export class App implements iApp {
 					});
 				});
 
-				}, (error: Error) => {
-				console.error("getClientAllPeripheralsData", error);
-			});
+				}, errorCallback);
 		},() => {
 			callback(responseDataPackages);
 		});
@@ -471,9 +455,7 @@ export class App implements iApp {
 						peripheral.initializeData();
 					});
 				}
-			}, (error: Error) => {
-				console.log(error);
-			});
+			}, errorCallback);
 		});
 	}
 }

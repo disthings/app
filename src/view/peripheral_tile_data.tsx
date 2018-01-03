@@ -3,6 +3,10 @@ import {Peripheral} from "../model/peripheral";
 import {PeripheralTileDataProps, PeripheralTileDataState, SingleArgumentCallback} from "../types";
 import {Dimensions} from "react-native";
 
+/*
+This is the class that has to be extended to show the data of a peripheral. The title as well as the positioning and
+size are managed from the framework.
+ */
 export abstract class PeripheralTileData<K extends PeripheralTileDataProps, L extends PeripheralTileDataState>
 	extends React.Component<PeripheralTileDataProps, PeripheralTileDataState> {
 
@@ -20,18 +24,26 @@ export abstract class PeripheralTileData<K extends PeripheralTileDataProps, L ex
 			windowDimensions: Dimensions.get("window")
 		};
 
-		props.peripheral.subscribeToEvent("newTileData", () => {
+		props.peripheral.subscribeToEvent("newData", () => {
 			this.setState({data: props.peripheral.getTileData()});
 		}, this.subscriberID);
 	}
 
 	componentWillUnmount(): void {
-		this.peripheral.unsubscribeFromEvent("newTileData", this.subscriberID);
+		this.peripheral.unsubscribeFromEvent("newData", this.subscriberID);
 	}
 
+	/*
+	Use this method to subscribe to an event happening at the peripheral. In your peripheral implementation you can
+	call the informEventSubscribers method to call your callback.
+	 */
 	subscribeToEvent(eventName: string, callback: SingleArgumentCallback, id: string): void {
 		this.peripheral.subscribeToEvent(eventName, callback, id);
 	}
+
+	/*
+	Use this method to unsubscribe from an event happening at the peripheral.
+	 */
 	unsubscribeFromEvent(eventName: string, id: string): void {
 		this.peripheral.unsubscribeFromEvent(eventName, id);
 	}

@@ -1,8 +1,11 @@
 import {SingleArgumentCallback, Subscriber} from "./types";
 
+/*
+A class for realizing the Publisher/Subscriber pattern.
+ */
 export class Publisher {
 
-	private subscribers: Map<string, Array<Subscriber>>;
+	private subscribers: Map<string, Array<Subscriber>>; // the key is the event's name
 
 	constructor() {
 		this.subscribers = new Map<string, Array<Subscriber>>();
@@ -11,7 +14,7 @@ export class Publisher {
 	subscribeToEvent(eventName: string, callback: SingleArgumentCallback, subscriberID: string): void {
 		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
 
-		if(!subs) {
+		if(!subs) { // if this event was never subscribed to yet, initialize the array
 			subs = [];
 			this.subscribers.set(eventName, subs);
 		}
@@ -22,27 +25,31 @@ export class Publisher {
 		});
 	}
 
-	unsubscribeFromEvent(eventName: string, subscriberID: string): void {
+	unsubscribeFromEvent(eventName: string, subscriberID: string): boolean {
 		let found: boolean = false;
 		let i: number = 0;
 		let subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
-		while(!found && i < subs.length) {
-			let sub: Subscriber = subs[i];
-			if(found = sub.id === subscriberID) {
-				subs.splice(i, 1);
+		if(subs) {
+			while(!found && i < subs.length) {
+				let sub: Subscriber = subs[i];
+				if(found = sub.id === subscriberID) {
+					subs.splice(i, 1);
+				}
+				i++;
 			}
-			i++;
 		}
+		return found;
 	}
 
-	informEventSubscribers(eventName: string, args?: any): void {
+	informEventSubscribers(eventName: string, args?: any): boolean {
 		const subs: Array<Subscriber> = this.subscribers.get(eventName) as Array<Subscriber>;
-
-		if(subs) {
+		let found: boolean = subs !== undefined;
+		if(found) {
 			subs.forEach((sub: Subscriber) => {
 				sub.callback(args);
 			});
 		}
+		return found;
 	}
 
 	getEventSubscribers(eventName: string): Array<Subscriber> {

@@ -6,22 +6,29 @@ import {MainView} from "./main_view";
 import {iApp} from "../presenter/i_app";
 import {SettingsView} from "./settings_view";
 import {
-	PeripheralPartsContainer, ViewType, ViewContainerState, Subscriber,	PeripheralViewClass, SingleArgumentCallback
+	PeripheralPartsContainer, ViewType, ViewContainerState,	PeripheralViewClass, SingleArgumentCallback
 } from "../types";
 import {peripherals} from "../peripherals/peripherals_declaration";
 import {ReactNode} from "react";
 import {Peripheral} from "../model/peripheral";
 import {IPInputField} from "./ip_input_field";
+import {Publisher} from "../publisher";
 
+/*
+This is the container for all what is shown on the screen. It contains a button bar on the top, and a viewport directly
+underneath it. In the viewport can the MainView, the IpInputField, the SettingsView or a PeripheralView be shown. This
+is also the Component where the App is being instantiated.
+ */
 export class ViewContainer<K extends any, L extends ViewContainerState> extends React.Component<any, ViewContainerState> {
 
 	private app: iApp;
 	private currentView: ReactNode;
-	private onLayoutChangeSubscribers: Array<Subscriber>;
-	private onViewChangeCallback: Function;
+	private publisher: Publisher;
 
 	constructor(props: K, state: L) {
 		super(props, state);
+
+		this.publisher = new Publisher();
 
 		this.state = {
 			readyToRender: false,
@@ -30,14 +37,12 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 			windowDimensions: Dimensions.get("window")
 		};
 		this.app = new App();
-		this.app.onReadyToRender((host: string) => {
+		this.app.onReadyToRender((host: string) => { // As soon as the app loaded and is ready to render, the view is informed.
 			this.setState({
 				readyToRender: true,
 				hasIPAddress: host.length > 0
 			});
 		});
-
-		this.onLayoutChangeSubscribers = [];
 
 		peripherals.forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
 			this.app.addPeripheral(peripheralPartsContainer);
@@ -45,7 +50,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 	}
 
 	componentWillMount(): void {
-		BackHandler.addEventListener("hardwareBackPress", () => {
+		BackHandler.addEventListener("hardwareBackPress", () => { // Activate the back-button listener
 
 			if (this.app.getCurrentViewType() === ViewType.MAIN) {
 				BackHandler.exitApp();
@@ -67,7 +72,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 	}
 
 	componentDidMount(): void {
-		AppState.addEventListener("change", (newState: string) => {
+		AppState.addEventListener("change", (newState: string) => { // Listen if the app is in the background, closed or being shown.
 			this.app.managePeripheralDataBasedOnState(newState);
 		});
 	}
@@ -76,108 +81,96 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		this.app.setCurrentViewType(ViewType.PERIPHERAL);
 		this.app.setCurrentPeripheral(peripheral);
 		this.setState({currentView: ViewType.PERIPHERAL});
-		this.onViewChangeCallback(ViewType.PERIPHERAL);
+		this.publisher.informEventSubscribers("onViewChange", ViewType.PERIPHERAL);
 	}
 
 	private showMainView(): void {
 		this.app.setCurrentViewType(ViewType.MAIN);
 		this.setState({currentView: ViewType.MAIN});
-		this.onViewChangeCallback(ViewType.MAIN);
+		this.publisher.informEventSubscribers("onViewChange", ViewType.MAIN);
 	}
 
 	private showSettingsView(): void {
 		this.app.setCurrentViewType(ViewType.SETTINGS);
 		this.setState({currentView: ViewType.SETTINGS});
-		this.onViewChangeCallback(ViewType.SETTINGS);
+		this.publisher.informEventSubscribers("onViewChange", ViewType.SETTINGS);
 	}
 
 	onLayout(_event: Event): void {
-		this.onLayoutChangeSubscribers.forEach((sub: Subscriber) => {
-			sub.callback();
-		});
+		this.publisher.informEventSubscribers("onLayout");
 	}
 
 	subscribeToLayoutChange(callback: SingleArgumentCallback, id: string): void {
-		this.onLayoutChangeSubscribers.push({
-			callback: callback,
-			id: id
-		});
+		this.publisher.subscribeToEvent("onLayout", callback, id);
 	}
 
 	unsubscribeFromLayoutChange(id: string): void {
-		let found: boolean = false;
-		let i: number = 0;
+		this.publisher.unsubscribeFromEvent("onLayout", id);
+	}
 
-		while(!found && i < this.onLayoutChangeSubscribers.length) {
-			let sub: Subscriber = this.onLayoutChangeSubscribers[i];
-			if(found = sub.id === id) {
-				this.onLayoutChangeSubscribers.splice(i, 1);
-			}
-			i++;
+	subscribeOnViewChange(callback: SingleArgumentCallback, subscriberID: string): void {
+		this.publisher.subscribeToEvent("onViewChange", callback, subscriberID);
+	}
+
+	private showIpInputField(): ReactNode {
+		return (<View style={styles.IPview} onLayout={this.onLayout.bind(this)}>
+			<IPInputField setNewIP={(ip: string) => {
+				this.app.setConnectingIP(ip);
+				this.setState({
+					hasIPAddress: true
+				});
+			}}/>
+		</View>);
+	}
+
+	private createCurrentView(): void {
+		let clientPeripherals: Array<PeripheralPartsContainer> = this.app.getClientPeripherals();
+		let serverPeripherals: Array<PeripheralPartsContainer> = this.app.getServerPeripherals();
+
+		let joinedPeripherals: Array<PeripheralPartsContainer> = clientPeripherals.concat(serverPeripherals);
+
+		switch(this.state.currentView) {
+			case ViewType.SETTINGS:
+				this.currentView = <SettingsView/>;
+				break;
+			case ViewType.MAIN:
+				this.currentView = <MainView peripherals={joinedPeripherals}
+											 subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}
+											 unsubscribeFromLayoutChange={this.unsubscribeFromLayoutChange.bind(this)}
+											 onPressTile={(SomePeripheralView: PeripheralViewClass, peripheral: Peripheral) => {
+												 // it is important that SomePeripheralView is starting with a capital letter,
+												 // or else JSX won't recognize it.
+												 this.currentView = <SomePeripheralView peripheral={peripheral}/>;
+												 this.showPeripheralView(peripheral);
+											 }}/>;
+				break;
 		}
-	}
-
-	subscribeOnViewChange(callback: Function): void {
-		this.onViewChangeCallback = callback;
-	}
-
-	unsubscribeOnViewChange(): void {
-		delete this.onViewChangeCallback;
 	}
 
 	render(): React.ReactNode {
 
 		if(this.state.readyToRender) {
 			if(this.state.hasIPAddress) {
-				let clientPeripherals: Array<PeripheralPartsContainer> = this.app.getClientPeripherals();
-				let serverPeripherals: Array<PeripheralPartsContainer> = this.app.getServerPeripherals();
-
-				let joinedPeripherals: Array<PeripheralPartsContainer> = clientPeripherals.concat(serverPeripherals);
-
-				switch(this.state.currentView) {
-					case ViewType.SETTINGS:
-						this.currentView = <SettingsView/>;
-						break;
-					case ViewType.MAIN:
-						this.currentView = <MainView peripherals={joinedPeripherals}
-													 subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}
-													 unsubscribeFromLayoutChange={this.unsubscribeFromLayoutChange.bind(this)}
-													 onPressTile={(SomePeripheralView: PeripheralViewClass, peripheral: Peripheral) => {
-														 // it is important that SomePeripheralView is starting with a capital letter,
-														 // or else JSX won't recognize it.
-														 this.currentView = <SomePeripheralView peripheral={peripheral}/>;
-														 this.showPeripheralView(peripheral);
-													 }}/>;
-						break;
-				}
+				this.createCurrentView();
 				return (
 					<View onLayout={this.onLayout.bind(this)}>
-						<MenuBar onPressHomeButton={() => {
-							this.showMainView();
-						}} onPressSettingsButton={() => {
-							this.showSettingsView();
-						}}
-						subscribeOnViewChange={this.subscribeOnViewChange.bind(this)}
+
+						<MenuBar onPressHomeButton={() => {this.showMainView();}}
+								 onPressSettingsButton={() => {this.showSettingsView();}}
+								 subscribeOnViewChange={this.subscribeOnViewChange.bind(this)}
 						/>
-						{this.currentView}
+
+						{this.currentView /* This is a JSX Object */}
 					</View>
 				);
 			}
 			else {
-				return (<View style={styles.IPview} onLayout={this.onLayout.bind(this)}>
-					<IPInputField setNewIP={(ip: string) => {
-						this.app.setConnectingIP(ip);
-						this.setState({
-							hasIPAddress: true
-						});
-					}} subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}/>
-				</View>);
+				return this.showIpInputField();  // This is a JSX Object
 			}
 		}
 		else {
 			return <View/>;
 		}
-
 	}
 }
 

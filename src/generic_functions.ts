@@ -2,10 +2,18 @@ import {Iterable, ObjectLiteral} from "./types";
 
 export function errorCallback(error: Error): void {
 	if(error) {
-		console.error(error);
+		if(error instanceof Error) {
+			console.error(error);
+		}
+		else {
+			console.error(new Error(error));
+		}
 	}
 }
 
+/*
+Iterate over an array or object literal and apply an asynchronous function on every member.
+ */
 export function forEachAsync<T>(arrayOrObjectLiteral: Iterable<T>,
 									   doOnIteration: (item: T, indexOrKey: number | string, next: () => void) => void,
 									   doAfterLastIteration: () => void): void {

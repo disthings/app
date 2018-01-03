@@ -53,7 +53,7 @@ export type WebSocketSettings = {
 export type DataManagerSettings = {dataRetentionInterval: number;};
 
 export type Settings = {
-	maxTryCounter: number;
+	maxSkippedIntervals: number;
 	dataRequestInterval: number;
 	webSocket: WebSocketSettings;
 	dataManager: DataManagerSettings;
@@ -94,7 +94,7 @@ export type MenuBarProps = {onPressHomeButton: Function; onPressSettingsButton: 
 export type PeripheralTileProps = {
 	peripheral: Peripheral;
 	peripheralTileData: any;
-	subscribeToLayoutChange: (callback: Function, id: string) => void;
+	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
 	onPressTile: Function;
 	key: string
@@ -106,7 +106,7 @@ export type PeripheralTileDataClass = typeof PeripheralTileData;
 
 export type PeripheralTileDataProps = {
 	peripheral: Peripheral;
-	subscribeToLayoutChange: (callback: Function, id: string) => void;
+	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
 };
 
 export type PeripheralTileDataState = {data: any; windowDimensions: ScaledSize};
@@ -119,6 +119,6 @@ export type PeripheralViewState = {data: any; status: any};
 
 export type PeripheralViewClass = typeof PeripheralView;
 
-export type IPInputFieldProps = {setNewIP: (ip: string) => void; subscribeToLayoutChange: (callback: Function, id: string) => void;};
+export type IPInputFieldProps = {setNewIP: (ip: string) => void;};
 
 export type IPInputFieldState = {text: string;};

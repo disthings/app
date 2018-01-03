@@ -33,7 +33,7 @@ export class Transaction implements iTransaction {
 				callback(transaction, error);
 			}
 			else {
-				throw error;
+				console.error(error);
 			}
 		});
 	}

@@ -8,6 +8,7 @@ import {SQLiteDatabase} from "./sqlite_database";
 import {iTransaction} from "./i_transaction";
 import {SettingsManager} from "./settings_manager";
 import {Peripheral} from "./peripheral";
+import {errorCallback} from "../generic_functions";
 
 
 /*
@@ -44,9 +45,7 @@ export class DataManager implements iDataManager {
 						peripheral.deleteOldDataFromMemory();
 					});
 
-				}, (error: Error) => {
-					throw error;
-				});
+				}, errorCallback);
 			});
 		}, this.dataRetentionInterval);
 	}

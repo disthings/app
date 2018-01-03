@@ -8,6 +8,9 @@ import {
 } from "../types";
 import {Peripheral} from "../model/peripheral";
 
+/*
+This is the class for the tiles. It contains a title and the shown data (PeripheralTileData)
+ */
 export class PeripheralTile<K extends PeripheralTileProps, L extends PeripheralTileState>
 	extends React.Component<PeripheralTileProps, PeripheralTileState> {
 
@@ -24,6 +27,7 @@ export class PeripheralTile<K extends PeripheralTileProps, L extends PeripheralT
 			windowDimensions: Dimensions.get("window")
 		};
 
+		// the layout change between portrait and landscape is used for defining the width => the way icons are placed.
 		this.props.subscribeToLayoutChange(() => {
 			this.setState({windowDimensions: Dimensions.get("window")});
 		}, this.subscriberID);
@@ -49,7 +53,7 @@ export class PeripheralTile<K extends PeripheralTileProps, L extends PeripheralT
 						<Image
 							style={{width: 20, height: 20}}
 							source={this.props.peripheral.getType() === PeripheralType.CLIENT ?
-								require("../resources/mobile-1976104_200px.png") : require("../resources/home-icon_200px.png")}
+								require("../resources/files/mobile-1976104_200px.png") : require("../resources/files/home-icon_200px.png")}
 						/>
 					</View>
 					<View style={styles.tileDataContainer}>
