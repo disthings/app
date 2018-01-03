@@ -5,8 +5,7 @@ import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
 import {Message, UserDataStructure} from "../types";
 import {
-	DataSet, PeripheralPartsContainer, PeripheralType, RequestDataPackage,
-	ResponseDataPackage, Settings, ViewType
+	PeripheralPartsContainer, PeripheralType, RequestDataPackage, ResponseDataPackage, Settings, ViewType
 } from "../types";
 import {iSQLiteDatabase} from "../model/i_sqlite_database";
 import {iTransaction} from "../model/i_transaction";
@@ -52,10 +51,10 @@ export class App implements iApp {
 
 		SettingsManager.getRuntimeSettings((_error: Error, result: StartingSettings) => {
 
-			if(result) {
+			if(result) { // if there are already saved settings
 				this.settings = result;
 			}
-			else {
+			else { // get the initial settings
 				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.resetSettings((_error: Error) => {
 					console.error(_error);
@@ -341,8 +340,7 @@ export class App implements iApp {
 					responseDataPackages.push({
 						"name": peripheralName,
 						"data": result,
-						"peripheralType": PeripheralType.CLIENT,
-						"dataSet": DataSet.VIEW
+						"peripheralType": PeripheralType.CLIENT
 					});
 
 					this.dataManager.emptyDataTable(peripheral, transaction, (_transaction: iTransaction, _result: any) => {
@@ -365,8 +363,7 @@ export class App implements iApp {
 				"name": this.currentPeripheral.getName(),
 				"timestamp": Date.now(),
 				"data": [],
-				"peripheralType": PeripheralType.SERVER,
-				"dataSet": DataSet.VIEW
+				"peripheralType": PeripheralType.SERVER
 			}]
 		});
 	}

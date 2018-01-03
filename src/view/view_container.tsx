@@ -58,7 +58,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 
 	componentWillUnmount(): void {
 		BackHandler.removeEventListener("hardwareBackPress", () => {
-			// Logger.log("");
+			// console.log("Back pressed");
 		});
 
 		AppState.removeEventListener("change", (newState: string) => {

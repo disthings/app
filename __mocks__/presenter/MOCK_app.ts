@@ -4,7 +4,7 @@ import {SyncManager} from "../model/MOCK_sync_manager";
 import {iDataManager} from "../../src/model/i_data_manager";
 import {DataManager} from "../model/MOCK_data_manager";
 import {
-	DataSet, PeripheralPartsContainer, PeripheralType, RequestDataPackage,
+	PeripheralPartsContainer, PeripheralType, RequestDataPackage,
 	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
@@ -345,8 +345,7 @@ export class App implements iApp {
 					responseDataPackages.push({
 						"name": peripheralName,
 						"data": result,
-						"peripheralType": PeripheralType.CLIENT,
-						"dataSet": DataSet.VIEW
+						"peripheralType": PeripheralType.CLIENT
 					});
 
 					this.dataManager.emptyDataTable(peripheral, transaction, () => {
@@ -372,8 +371,7 @@ export class App implements iApp {
 				"name": this.currentPeripheral.getName(),
 				"timestamp": Date.now(),
 				"data": [],
-				"peripheralType": PeripheralType.SERVER,
-				"dataSet": DataSet.VIEW
+				"peripheralType": PeripheralType.SERVER
 			}]
 		});
 	}

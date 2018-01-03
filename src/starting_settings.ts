@@ -1,4 +1,4 @@
-import {DataManagerStartingSettings, LoggerStartingSettings, WebSocketStartingSettings} from "./types";
+import {DataManagerStartingSettings, WebSocketStartingSettings} from "./types";
 
 export class StartingSettings {
 
@@ -9,14 +9,10 @@ export class StartingSettings {
 	readonly dataRequestInterval: number = 2000;
 
 	readonly webSocket: WebSocketStartingSettings = {
-		host: "",
+		host: "", // the user must define the host
 		port: 1880,
 		path: "/peripherals",
 		reconnectionInterval: 500
-	};
-
-	readonly logger: LoggerStartingSettings = {
-		isActive: true
 	};
 
 	readonly dataManager: DataManagerStartingSettings = {

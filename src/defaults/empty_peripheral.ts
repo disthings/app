@@ -1,5 +1,5 @@
 import {iClientPeripheral} from "../model/i_client_peripheral";
-import {DataSet, PeripheralType, RequestDataPackage, UserDataStructure} from "../types";
+import {PeripheralType, RequestDataPackage, UserDataStructure} from "../types";
 import {iServerPeripheral} from "../model/i_server_peripheral";
 import {Peripheral} from "../model/peripheral";
 
@@ -39,8 +39,7 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 			name: "EmptyPeripheral",
 			timestamp: -1,
 			data: {},
-			peripheralType: PeripheralType.EMPTY,
-			dataSet: DataSet.NONE
+			peripheralType: PeripheralType.EMPTY
 		};
 	}
 

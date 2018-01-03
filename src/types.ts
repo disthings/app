@@ -9,8 +9,6 @@ import {PeripheralView} from "./view/peripheral_view";
 // enums
 export enum PeripheralType {SERVER = "SERVER", CLIENT = "CLIENT", EMPTY = "EMPTY"}
 
-export enum DataSet {TILE = "TILE", VIEW = "VIEW", NONE = "NONE"}
-
 export enum ViewType {MAIN = "MAIN", PERIPHERAL = "PERIPHERAL", SETTINGS = "SETTINGS"}
 
 export enum DatabaseTable {DATA = "DATA", BACKUP = "BACKUP"}
@@ -28,9 +26,9 @@ export type Subscriber = {callback: SingleArgumentCallback; id: string};
 
 export type PeripheralPartsContainer = {peripheral: Peripheral | iPeripheral; view: Function; tile: Function; key: string};
 
-export type RequestDataPackage = {name: string; timestamp: number; data: any; peripheralType: PeripheralType; dataSet: DataSet};
+export type RequestDataPackage = {name: string; timestamp: number; data: any; peripheralType: PeripheralType;};
 
-export type ResponseDataPackage = {name: string; data: any; peripheralType: PeripheralType; dataSet: DataSet};
+export type ResponseDataPackage = {name: string; data: any; peripheralType: PeripheralType;};
 
 export type ErrorCallback = (error: Error) => void;
 
@@ -42,7 +40,6 @@ export type WebSocketStartingSettings = {
 	readonly path: string;
 	readonly reconnectionInterval: number;
 };
-export type LoggerStartingSettings = {readonly isActive: boolean;};
 
 export type DataManagerStartingSettings = {readonly dataRetentionInterval: number;};
 
@@ -53,15 +50,12 @@ export type WebSocketSettings = {
 	reconnectionInterval: number;
 };
 
-export type LoggerSettings = {isActive: boolean;};
-
 export type DataManagerSettings = {dataRetentionInterval: number;};
 
 export type Settings = {
 	maxTryCounter: number;
 	dataRequestInterval: number;
 	webSocket: WebSocketSettings;
-	logger: LoggerSettings;
 	dataManager: DataManagerSettings;
 };
 

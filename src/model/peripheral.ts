@@ -1,5 +1,5 @@
 import {
-	PeripheralType, UserDataStructure, DataSet, RequestDataPackage, SingleArgumentCallback, Command
+	PeripheralType, UserDataStructure, RequestDataPackage, SingleArgumentCallback, Command
 } from "../types";
 import {Publisher} from "../publisher";
 
@@ -87,8 +87,7 @@ export abstract class Peripheral {
 			"name": this.getName(),
 			"timestamp": Date.now(),
 			"data": [],
-			"peripheralType": PeripheralType.SERVER,
-			"dataSet": DataSet.TILE
+			"peripheralType": PeripheralType.SERVER
 		};
 	}
 
