@@ -2,8 +2,9 @@
 	"name": "disthings",
 	"version": "0.0.1",
 	"scripts": {
-		"start": "adb reverse tcp:8081 tcp:8081 && react-native run-android",
-		"test": "jest"
+		"start": "react-native run-android",
+		"test": "jest",
+	  	"tsc": "tsc"
 	},
 	"contributors": [
 		{

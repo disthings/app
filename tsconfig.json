@@ -17,11 +17,12 @@
 	"skipLibCheck": true
   },
   "include": [
-	"./src",
-	"./__mocks__",
-	"./__tests__"
+	"src",
+	"__mocks__",
+	"__tests__"
   ],
   "exclude": [
-	"./node_modules"
+	"src/js_to_typescript_adapters",
+	"node_modules"
   ]
 }
