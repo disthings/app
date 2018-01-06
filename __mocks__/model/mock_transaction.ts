@@ -1,5 +1,5 @@
 import {ErrorCallback} from "../../src/types";
-import {iTransaction} from "./MOCK_i_transaction";
+import {iTransaction} from "./mock_i_transaction";
 
 export class Transaction implements iTransaction {
 

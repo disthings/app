@@ -37,38 +37,32 @@ test("testServerClientCommunications", (done: Function) => {
 
 		ws.send(JSON.stringify({
 			type: "getServerAllPeripheralsData",
-			data: [],
-			id: "TEST"
+			data: []
 		}));
 
 		ws.send(JSON.stringify({
 			type: "clientAllPeripheralsData",
-			data: [],
-			id: "TEST"
+			data: []
 		}));
 
 		ws.send(JSON.stringify({
 			type: "getServerPeripheralData",
-			data: [],
-			id: "TEST"
+			data: []
 		}));
 
 		ws.send(JSON.stringify({
 			type: "serverAllPeripheralsDataReceived",
-			data: [],
-			id: "TEST"
+			data: []
 		}));
 
 		ws.send(JSON.stringify({
 			type: "serverPeripheralCommand",
-			data: [],
-			id: "TEST"
+			data: []
 		}));
 
 		ws.send(JSON.stringify({
 			type: "RANDOM_MESSAGE",
-			data: [],
-			id: "TEST"
+			data: []
 		}));
 	});
 });

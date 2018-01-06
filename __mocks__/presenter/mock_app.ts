@@ -1,8 +1,8 @@
 import {iApp} from "../../src/presenter/i_app";
 import {iSyncManager} from "../../src/model/i_synchronization_manager";
-import {SyncManager} from "../model/MOCK_sync_manager";
+import {SyncManager} from "../model/mock_sync_manager";
 import {iDataManager} from "../../src/model/i_data_manager";
-import {DataManager} from "../model/MOCK_data_manager";
+import {DataManager} from "../model/mock_data_manager";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage,
 	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure
@@ -11,9 +11,9 @@ import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import Timer = NodeJS.Timer;
 import {DefaultValues} from "../../src/defaults/default_values";
 import {Peripheral} from "../../src/model/peripheral";
-import {SettingsManager} from "../model/MOCK_settings_manager";
+import {SettingsManager} from "../model/mock_settings_manager";
 import {StartingSettings} from "../../src/starting_settings";
-import {iTransaction} from "../model/MOCK_i_transaction";
+import {iTransaction} from "../model/mock_i_transaction";
 import {forEachAsync} from "../../src/generic_functions";
 
 export class App implements iApp {

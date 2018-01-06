@@ -2,8 +2,8 @@ import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 const SQLiteInstance: any = require("sqlite3").verbose();
 const TransactionDatabase: any = require("sqlite3-transactions").TransactionDatabase;
 import {ErrorCallback, TransactionCallback} from "../../src/types";
-import {Transaction} from "./MOCK_transaction";
-import {iTransaction} from "./MOCK_i_transaction";
+import {Transaction} from "./mock_transaction";
+import {iTransaction} from "./mock_i_transaction";
 
 export class SQLiteDatabase implements iSQLiteDatabase {
 

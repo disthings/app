@@ -4,10 +4,10 @@ import {
 	QueryResultAsUserDataStructureCallback, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
-import {SettingsManager} from "./MOCK_settings_manager";
+import {SettingsManager} from "./mock_settings_manager";
 import {Peripheral} from "../../src/model/peripheral";
-import {SQLiteDatabase} from "./MOCK_sqlite_database";
-import {iTransaction} from "./MOCK_i_transaction";
+import {SQLiteDatabase} from "./mock_sqlite_database";
+import {iTransaction} from "./mock_i_transaction";
 
 export class DataManager implements iDataManager {
 

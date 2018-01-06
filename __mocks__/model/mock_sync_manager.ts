@@ -1,6 +1,6 @@
 import {iSyncManager} from "../../src/model/i_synchronization_manager";
 import {MessageCallback, Settings, Subscriber, Message, SingleArgumentCallback} from "../../src/types";
-import {SettingsManager} from "./MOCK_settings_manager";
+import {SettingsManager} from "./mock_settings_manager";
 import * as WebSocket from "ws";
 
 export class SyncManager implements iSyncManager {

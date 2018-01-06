@@ -1,5 +1,5 @@
 import {iSQLiteDatabase} from "../src/model/i_sqlite_database";
-import {SQLiteDatabase} from "../__mocks__/model/MOCK_sqlite_database";
+import {SQLiteDatabase} from "../__mocks__/model/mock_sqlite_database";
 
 const db: iSQLiteDatabase = new SQLiteDatabase("TEST_2");
 

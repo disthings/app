@@ -1,5 +1,5 @@
 import {iApp} from "../src/presenter/i_app";
-import {App} from "../__mocks__/presenter/MOCK_app";
+import {App} from "../__mocks__/presenter/mock_app";
 import {EmptyView} from "../src/defaults/empty_view";
 import {EmptyPeripheral} from "../src/defaults/empty_peripheral";
 import {PeripheralType} from "../src/types";

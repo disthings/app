@@ -1,4 +1,4 @@
-import {MockedAsyncStorage} from "./MOCK_async_storage";
+import {MockedAsyncStorage} from "./mock_async_storage";
 import {StartingSettings} from "../../src/starting_settings";
 import {Settings} from "../../src/types";
 
