@@ -1,6 +1,7 @@
 import {iDataManager} from "./i_data_manager";
 import {
-	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, TransactionCallback, UserDataStructure
+	DatabaseTable, ErrorCallback, iPeripheralInternal, PeripheralPartsContainer, PeripheralType, TransactionCallback,
+	UserDataStructure
 } from "../types";
 import {iSQLiteDatabase} from "./i_sqlite_database";
 import {SQLiteDatabase} from "./sqlite_database";
@@ -36,11 +37,10 @@ export class DataManager implements iDataManager {
 
 		setInterval(() => {
 			this.clientPeripherals.forEach((peripheralParts: PeripheralPartsContainer) => {
-				let peripheral: Peripheral = peripheralParts.peripheral as Peripheral;
+				let peripheral: iPeripheralInternal = peripheralParts.peripheral as iPeripheralInternal;
 				let db: iSQLiteDatabase = this.getDatabase(peripheralParts.key);
 				db.transaction((transaction: iTransaction) => {
-					// todo peripheral and peripheral.removeOldData()
-					this.insertDataIntoDataTable(peripheral, peripheral.removeOldData(), transaction, () => {
+					this.insertDataIntoDataTable(peripheral.getName(), peripheral.removeOldData(), transaction, () => {
 						// console.log();
 					});
 
@@ -113,31 +113,30 @@ export class DataManager implements iDataManager {
 	 */
 	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void {
 		transaction.executeSql("CREATE TABLE '" + peripheral.getName() + "_" + DatabaseTable.DATA + "' (dataPackage BLOB);", [],
-			(transaction: iTransaction, _result: any) => {
-
+			() => {
 				transaction.executeSql("CREATE TABLE '" + peripheral.getName() +  "_" + DatabaseTable.BACKUP + "' (dataPackage BLOB);", [], callback);
 			});
 	}
 
-	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+	insertDataIntoDataTable(peripheralName: string, data: Array<UserDataStructure>, transaction: iTransaction,
 							callback: Function): void {
 
-		this.insertDataIntoDb(peripheral, DatabaseTable.DATA, data, transaction, callback);
+		this.insertDataIntoDb(peripheralName, DatabaseTable.DATA, data, transaction, callback);
 	}
 
-	insertPeripheralDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+	insertPeripheralDataIntoBackupTable(peripheralName: string, data: Array<UserDataStructure>, transaction: iTransaction,
 										callback: Function): void {
 
-		this.insertDataIntoDb(peripheral, DatabaseTable.BACKUP, data, transaction, callback);
+		this.insertDataIntoDb(peripheralName, DatabaseTable.BACKUP, data, transaction, callback);
 	}
 
-	private insertDataIntoDb(peripheral: Peripheral, table: DatabaseTable, data: Array<UserDataStructure>,
+	private insertDataIntoDb(peripheralName: string, table: DatabaseTable, data: Array<UserDataStructure>,
 							 transaction: iTransaction, callback: Function): void {
 
 		const values: string = JSON.stringify(data);
 
 		if(values !== "") {
-			let query: string = "INSERT INTO '" + peripheral.getName() +  "_" + table + "' (dataPackage) VALUES ('" + values + "');";
+			let query: string = "INSERT INTO '" + peripheralName +  "_" + table + "' (dataPackage) VALUES ('" + values + "');";
 			transaction.executeSql(query, [], callback);
 		}
 		else {
@@ -145,18 +144,18 @@ export class DataManager implements iDataManager {
 		}
 	}
 
-	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void {
-		this.restoreAllDataFromTable(peripheral, DatabaseTable.DATA, transaction, callback);
+	restoreAllDataFromDataTable(peripheralName: string, transaction: iTransaction, callback: TransactionCallback): void {
+		this.restoreAllDataFromTable(peripheralName, DatabaseTable.DATA, transaction, callback);
 	}
 
-	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void {
-		this.restoreAllDataFromTable(peripheral, DatabaseTable.BACKUP, transaction, callback);
+	restorePeripheralDataFromBackupTable(peripheralName: string, transaction: iTransaction, callback: TransactionCallback): void {
+		this.restoreAllDataFromTable(peripheralName, DatabaseTable.BACKUP, transaction, callback);
 	}
 
-	private restoreAllDataFromTable(peripheral: Peripheral, table: DatabaseTable,
+	private restoreAllDataFromTable(peripheralName: string, table: DatabaseTable,
 									transaction: iTransaction, callback: TransactionCallback): void {
 
-		const query: string = "SELECT * FROM '" + peripheral.getName() +  "_" + table +"';";
+		const query: string = "SELECT * FROM '" +peripheralName +  "_" + table +"';";
 
 		transaction.executeSql(query, [], (_transaction: iTransaction, result: any) => {
 			let data: Array<UserDataStructure> = [];

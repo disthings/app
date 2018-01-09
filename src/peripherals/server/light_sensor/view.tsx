@@ -22,7 +22,7 @@ export class LightView extends PeripheralView<any, PeripheralViewState> {
 		return (<View>
 			<Text>Level: {value}</Text>
 			<Button onPress={() => {
-				this.sendCommand({ // todo other interface to stop getViewData()
+				this.sendCommand({
 					commandName: this.state.status.isOn ? "off" : "on",
 					commandData: {}
 				});

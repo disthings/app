@@ -4,12 +4,11 @@ import {iTransaction} from "../__mocks__/model/mock_i_transaction";
 import {DataManager} from "../__mocks__/model/mock_data_manager";
 import {EmptyView} from "../src/defaults/empty_view";
 import {EmptyPeripheral} from "../src/defaults/empty_peripheral";
-import {Peripheral} from "../src/model/peripheral";
-import {PeripheralType} from "../src/types";
+import {iPeripheralInternal, PeripheralType} from "../src/types";
 import {errorCallback} from "../src/generic_functions";
 
 const dm: iDataManager = new DataManager();
-const mp_2: Peripheral = new EmptyPeripheral("Mocked_Peripheral_2", PeripheralType.CLIENT);
+const mp_2: iPeripheralInternal = new EmptyPeripheral("Mocked_Peripheral_2", PeripheralType.CLIENT);
 const data: any = ["DATA"];
 
 dm.addPeripheralToMemory({
@@ -44,7 +43,7 @@ test("Create db tables", (done: Function) => {
 
 test("Insert data into data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.insertDataIntoDataTable(mp_2, data, tx, (_result: any) => {
+		dm.insertDataIntoDataTable(mp_2.getName(), data, tx, (_result: any) => {
 			tx.commit(errorCallback);
 			done();
 		});
@@ -55,7 +54,7 @@ test("Insert data into data_table", (done: Function) => {
 
 test("insert data into backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.insertPeripheralDataIntoBackupTable(mp_2, data, tx, (_result: any) => {
+		dm.insertPeripheralDataIntoBackupTable(mp_2.getName(), data, tx, (_result: any) => {
 			tx.commit(errorCallback);
 			done();
 		});
@@ -66,7 +65,7 @@ test("insert data into backup_table", (done: Function) => {
 
 test("restore all data from data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.restoreAllDataFromDataTable(mp_2, tx, (result: any) => {
+		dm.restoreAllDataFromDataTable(mp_2.getName(), tx, (result: any) => {
 			expect(result.length).toBeGreaterThan(0);
 			tx.commit(errorCallback);
 			done();
@@ -79,7 +78,7 @@ test("restore all data from data_table", (done: Function) => {
 
 test("restore all data from backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.restorePeripheralDataFromBackupTable(mp_2, tx, (result: any) => {
+		dm.restorePeripheralDataFromBackupTable(mp_2.getName(), tx, (result: any) => {
 			expect(result.length).toBeGreaterThan(0);
 			tx.commit(errorCallback);
 			done();
@@ -113,7 +112,7 @@ test("empty backup_table", (done: Function) => {
 
 test("restore all data from empty data_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.restoreAllDataFromDataTable(mp_2, tx, (result: any) => {
+		dm.restoreAllDataFromDataTable(mp_2.getName(), tx, (result: any) => {
 			expect(result.length).toBe(0);
 			tx.commit(errorCallback);
 			done();
@@ -126,7 +125,7 @@ test("restore all data from empty data_table", (done: Function) => {
 
 test("restore all data from empty backup_table", (done: Function) => {
 	db_2.transaction((tx: iTransaction) => {
-		dm.restorePeripheralDataFromBackupTable(mp_2, tx, (result: any) => {
+		dm.restorePeripheralDataFromBackupTable(mp_2.getName(), tx, (result: any) => {
 			expect(result.length).toBe(0);
 			tx.commit(errorCallback);
 			done();

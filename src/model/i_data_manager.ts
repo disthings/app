@@ -11,12 +11,12 @@ export interface iDataManager {
 	getServerPeripherals(): Array<PeripheralPartsContainer>;
 	addPeripheralToMemory(peripheralPartsContainer: PeripheralPartsContainer): void;
 	createDbTables(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
-	insertDataIntoDataTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+	insertDataIntoDataTable(peripheralName: string, data: Array<UserDataStructure>, transaction: iTransaction,
 							callback: Function): void;
-	insertPeripheralDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
+	insertPeripheralDataIntoBackupTable(peripheralName: string, data: Array<UserDataStructure>, transaction: iTransaction,
 										callback: Function): void;
-	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void;
-	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void;
+	restoreAllDataFromDataTable(peripheralName: string, transaction: iTransaction, callback: TransactionCallback): void;
+	restorePeripheralDataFromBackupTable(peripheralName: string, transaction: iTransaction, callback: TransactionCallback): void;
 	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 }

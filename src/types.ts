@@ -4,6 +4,8 @@ import {ReactNode} from "react";
 import {ScaledSize} from "react-native";
 import {PeripheralTileData} from "./view/peripheral_tile_data";
 import {PeripheralView} from "./view/peripheral_view";
+import {iClientPeripheral} from "./model/i_client_peripheral";
+import {iServerPeripheral} from "./model/i_server_peripheral";
 
 // enums
 export enum PeripheralType {
@@ -37,8 +39,10 @@ export interface Subscriber {
 	id: string;
 }
 
+export type iPeripheralInternal = iClientPeripheral & iServerPeripheral & Peripheral;
+
 export interface PeripheralPartsContainer {
-	readonly peripheral: Peripheral;
+	readonly peripheral: iPeripheralInternal;
 	readonly view: Function;
 	readonly tile: Function;
 	readonly key: string;

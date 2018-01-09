@@ -5,7 +5,7 @@ import {iDataManager} from "../../src/model/i_data_manager";
 import {DataManager} from "../model/mock_data_manager";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage,
-	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure, PeripheralPartsDeclaration
+	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure, PeripheralPartsDeclaration, iPeripheralInternal
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import Timer = NodeJS.Timer;
@@ -174,7 +174,7 @@ export class App implements iApp {
 
 	addPeripheral(peripheralPartsDeclaration: PeripheralPartsDeclaration): void {
 
-		const peripheral: Peripheral = new (peripheralPartsDeclaration.peripheral as any);
+		const peripheral: iPeripheralInternal = new (peripheralPartsDeclaration.peripheral as any);
 		const type: PeripheralType = peripheral.getType();
 		const peripheralPartsContainer: PeripheralPartsContainer = {
 			peripheral: peripheral,
@@ -345,24 +345,25 @@ export class App implements iApp {
 		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer,
 													   _indexOrKey: number | string, next: () => void) => {
 
-			let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
+			let peripheral: iPeripheralInternal = peripheralPartsContainer.peripheral as iPeripheralInternal;
 			let peripheralName: string = peripheral.getName();
 			let db: iSQLiteDatabase = this.dataManager.getDatabase(peripheralName);
 			db.transaction((transaction: iTransaction) => {
 
-				this.dataManager.restoreAllDataFromDataTable(peripheral, transaction, (transaction: iTransaction, result: Array<UserDataStructure>) => {
-					responseDataPackages.push({
-						"name": peripheralName,
-						"data": result,
-						"peripheralType": PeripheralType.CLIENT
-					});
-
-					this.dataManager.emptyDataTable(peripheral, transaction, () => {
-						transaction.commit((error: Error) => {
-							console.error("getClientAllPeripheralsData 1", error);
+				this.dataManager.restoreAllDataFromDataTable(peripheral.getName(), transaction,
+					(transaction: iTransaction, result: Array<UserDataStructure>) => {
+						responseDataPackages.push({
+							"name": peripheralName,
+							"data": result,
+							"peripheralType": PeripheralType.CLIENT
 						});
-						next();
-					});
+
+						this.dataManager.emptyDataTable(peripheral, transaction, () => {
+							transaction.commit((error: Error) => {
+								console.error("getClientAllPeripheralsData 1", error);
+							});
+							next();
+						});
 				});
 
 			}, (error: Error) => {
@@ -468,12 +469,12 @@ export class App implements iApp {
 		this.getClientPeripherals().forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
 
 			const backupDB: iSQLiteDatabase = this.dataManager.getDatabase(peripheralPartsContainer.key);
-			const peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
+			const peripheral: iPeripheralInternal = peripheralPartsContainer.peripheral as iPeripheralInternal;
 
 			backupDB.transaction((backupTransaction: iTransaction) => {
 
 				if (state === "active") {
-					this.dataManager.restorePeripheralDataFromBackupTable(peripheral, backupTransaction,
+					this.dataManager.restorePeripheralDataFromBackupTable(peripheral.getName(), backupTransaction,
 						(backupTransaction: iTransaction, result: Array<UserDataStructure>) => {
 
 							if (result) {
@@ -487,8 +488,7 @@ export class App implements iApp {
 						});
 				}
 				else {
-					// todo peripheral and peripheral.getData()
-					this.dataManager.insertPeripheralDataIntoBackupTable(peripheral, peripheral.getData(), backupTransaction,
+					this.dataManager.insertPeripheralDataIntoBackupTable(peripheral.getName(), peripheral.getData(), backupTransaction,
 						() => {
 							backupTransaction.commit((error: Error) => {
 								console.log("managePeripheralDataBasedOnState 2", error);

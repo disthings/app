@@ -3,7 +3,7 @@ import {iSyncManager} from "../model/i_synchronization_manager";
 import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
-import {Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
+import {iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage, ResponseDataPackage, Settings, ViewType
 } from "../types";
@@ -195,7 +195,7 @@ export class App implements iApp {
 
 	addPeripheral(peripheralPartsDeclaration: PeripheralPartsDeclaration): void {
 
-		const peripheral: Peripheral = new (peripheralPartsDeclaration.peripheral as any);
+		const peripheral: iPeripheralInternal = new (peripheralPartsDeclaration.peripheral as any);
 		const type: PeripheralType = peripheral.getType();
 		const peripheralPartsContainer: PeripheralPartsContainer = {
 			peripheral: peripheral,
@@ -326,12 +326,12 @@ export class App implements iApp {
 		forEachAsync(clientPeripherals, (peripheralPartsContainer: PeripheralPartsContainer,
 													   _indexOrKey: number | string, next: () => void) => {
 
-			let peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
+			let peripheral: iPeripheralInternal = peripheralPartsContainer.peripheral as iPeripheralInternal;
 			let peripheralName: string = peripheral.getName();
 			let db: iSQLiteDatabase = this.dataManager.getDatabase(peripheralName);
 			db.transaction((transaction: iTransaction) => {
 
-				this.dataManager.restoreAllDataFromDataTable(peripheral, transaction, (transaction: iTransaction, result: Array<UserDataStructure>) => {
+				this.dataManager.restoreAllDataFromDataTable(peripheral.getName(), transaction, (transaction: iTransaction, result: Array<UserDataStructure>) => {
 					responseDataPackages.push({
 						"name": peripheralName,
 						"data": result,
@@ -441,25 +441,24 @@ export class App implements iApp {
 		this.getClientPeripherals().forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
 
 			const backupDB: iSQLiteDatabase = this.dataManager.getDatabase(peripheralPartsContainer.key);
-			const peripheral: Peripheral = peripheralPartsContainer.peripheral as Peripheral;
+			const peripheral: iPeripheralInternal = peripheralPartsContainer.peripheral as iPeripheralInternal;
 
 			backupDB.transaction((backupTransaction: iTransaction) => {
 
 				if (state === "active") {
-					this.dataManager.restorePeripheralDataFromBackupTable(peripheral, backupTransaction,
+					this.dataManager.restorePeripheralDataFromBackupTable(peripheral.getName(), backupTransaction,
 						(backupTransaction: iTransaction, result: Array<UserDataStructure>) => {
 
 						if (result) {
 							peripheral.setData(peripheral.getData().concat(result));
-							this.dataManager.emptyBackupTable(peripheral, backupTransaction, (_transaction: iTransaction, _result: Function) => {
-								// todo
+							this.dataManager.emptyBackupTable(peripheral, backupTransaction, () => {
+								// console.log():
 							});
 						}
 					});
 				}
 				else {
-					// todo peripheral and peripheral.getData()
-					this.dataManager.insertPeripheralDataIntoBackupTable(peripheral, peripheral.getData(),
+					this.dataManager.insertPeripheralDataIntoBackupTable(peripheral.getName(), peripheral.getData(),
 						backupTransaction, () => {
 						peripheral.initializeData();
 					});
