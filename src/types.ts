@@ -38,16 +38,16 @@ export interface Subscriber {
 }
 
 export interface PeripheralPartsContainer {
-	peripheral: Peripheral;
-	view: Function;
-	tile: Function;
-	key: string;
+	readonly peripheral: Peripheral;
+	readonly view: Function;
+	readonly tile: Function;
+	readonly key: string;
 }
 
 export interface PeripheralPartsDeclaration {
-	peripheral: Function;
-	view: Function;
-	tile: Function;
+	readonly peripheral: Function;
+	readonly view: Function;
+	readonly tile: Function;
 }
 
 export interface RequestDataPackage {
