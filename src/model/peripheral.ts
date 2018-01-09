@@ -91,16 +91,6 @@ export abstract class Peripheral {
 	}
 
 	/*
-	Implement this method to sort through the data array and return what you consider as old data.
-	 */
-	abstract getOldData(): UserDataStructure;
-
-	/*
-	Implement this method to delete data you consider as old from the data array.
-	 */
-	abstract deleteOldDataFromMemory(): void;
-
-	/*
 	Implement this method to sort through the data array and return the data you want to show on the tile.
 	 */
 	abstract getTileData(): any;

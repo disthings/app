@@ -6,7 +6,8 @@ import {MainView} from "./main_view";
 import {iApp} from "../presenter/i_app";
 import {SettingsView} from "./settings_view";
 import {
-	PeripheralPartsContainer, ViewType, ViewContainerState,	PeripheralViewClass, SingleArgumentCallback
+	PeripheralPartsContainer, ViewType, ViewContainerState, PeripheralViewClass, SingleArgumentCallback,
+	PeripheralPartsDeclaration
 } from "../types";
 import {peripherals} from "../peripherals/peripherals_declaration";
 import {ReactNode} from "react";
@@ -44,8 +45,8 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 			});
 		});
 
-		peripherals.forEach((peripheralPartsContainer: PeripheralPartsContainer) => {
-			this.app.addPeripheral(peripheralPartsContainer);
+		peripherals.forEach((peripheralPartsDeclaration: PeripheralPartsDeclaration) => {
+			this.app.addPeripheral(peripheralPartsDeclaration);
 		});
 	}
 

@@ -1,7 +1,6 @@
 import {iDataManager} from "./i_data_manager";
 import {
-	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, QueryResultAsUserDataStructureCallback,
-	UserDataStructure
+	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, TransactionCallback, UserDataStructure
 } from "../types";
 import {iSQLiteDatabase} from "./i_sqlite_database";
 import {SQLiteDatabase} from "./sqlite_database";
@@ -40,9 +39,9 @@ export class DataManager implements iDataManager {
 				let peripheral: Peripheral = peripheralParts.peripheral as Peripheral;
 				let db: iSQLiteDatabase = this.getDatabase(peripheralParts.key);
 				db.transaction((transaction: iTransaction) => {
-					// todo peripheral and peripheral.getOldData()
-					this.insertDataIntoDataTable(peripheral, peripheral.getOldData(), transaction, () => {
-						peripheral.deleteOldDataFromMemory();
+					// todo peripheral and peripheral.removeOldData()
+					this.insertDataIntoDataTable(peripheral, peripheral.removeOldData(), transaction, () => {
+						// console.log();
 					});
 
 				}, errorCallback);
@@ -146,16 +145,16 @@ export class DataManager implements iDataManager {
 		}
 	}
 
-	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void {
 		this.restoreAllDataFromTable(peripheral, DatabaseTable.DATA, transaction, callback);
 	}
 
-	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void {
 		this.restoreAllDataFromTable(peripheral, DatabaseTable.BACKUP, transaction, callback);
 	}
 
 	private restoreAllDataFromTable(peripheral: Peripheral, table: DatabaseTable,
-									transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+									transaction: iTransaction, callback: TransactionCallback): void {
 
 		const query: string = "SELECT * FROM '" + peripheral.getName() +  "_" + table +"';";
 

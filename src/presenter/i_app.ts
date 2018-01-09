@@ -1,8 +1,8 @@
-import {PeripheralPartsContainer, ViewType} from "../types";
+import {PeripheralPartsContainer, PeripheralPartsDeclaration, ViewType} from "../types";
 import {Peripheral} from "../model/peripheral";
 
 export interface iApp {
-	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void;
+	addPeripheral(peripheralPartsDeclaration: PeripheralPartsDeclaration): void;
 	removePeripheral(peripheral: Peripheral): void;
 	getClientPeripherals(): Array<PeripheralPartsContainer>;
 	getServerPeripherals(): Array<PeripheralPartsContainer>;

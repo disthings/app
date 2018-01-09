@@ -1,12 +1,11 @@
 import * as React from "react";
 import {View, Text, Button} from "react-native";
 import {PeripheralView} from "../../../view/peripheral_view";
-import {PeripheralViewProps, PeripheralViewState} from "../../../types";
+import {PeripheralViewState} from "../../../types";
 
-export class LightView<K extends PeripheralViewProps, L extends PeripheralViewState>
-	extends PeripheralView<PeripheralViewProps, PeripheralViewState> {
+export class LightView extends PeripheralView<any, PeripheralViewState> {
 
-	constructor(props: K, state: L) {
+	constructor(props: any, state: any) {
 		super(props, state);
 	}
 
@@ -23,7 +22,7 @@ export class LightView<K extends PeripheralViewProps, L extends PeripheralViewSt
 		return (<View>
 			<Text>Level: {value}</Text>
 			<Button onPress={() => {
-				this.props.peripheral.sendCommand({
+				this.sendCommand({ // todo other interface to stop getViewData()
 					commandName: this.state.status.isOn ? "off" : "on",
 					commandData: {}
 				});

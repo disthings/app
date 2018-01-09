@@ -1,14 +1,14 @@
 import * as React from "react";
 import {Peripheral} from "../model/peripheral";
-import {PeripheralTileDataProps, PeripheralTileDataState, SingleArgumentCallback} from "../types";
+import {PeripheralTileDataState, SingleArgumentCallback} from "../types";
 import {Dimensions} from "react-native";
 
 /*
 This is the class that has to be extended to show the data of a peripheral. The title as well as the positioning and
 size are managed from the framework.
  */
-export abstract class PeripheralTileData<K extends PeripheralTileDataProps, L extends PeripheralTileDataState>
-	extends React.Component<PeripheralTileDataProps, PeripheralTileDataState> {
+export abstract class PeripheralTileData<K extends any, L extends PeripheralTileDataState>
+	extends React.Component<any, PeripheralTileDataState> {
 
 	private peripheral: Peripheral;
 	private subscriberID: string;

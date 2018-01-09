@@ -1,7 +1,6 @@
 import {iDataManager} from "../../src/model/i_data_manager";
 import {
-	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType,
-	QueryResultAsUserDataStructureCallback, UserDataStructure
+	DatabaseTable, ErrorCallback, PeripheralPartsContainer, PeripheralType, TransactionCallback, UserDataStructure
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import {SettingsManager} from "./mock_settings_manager";
@@ -35,9 +34,9 @@ export class DataManager implements iDataManager {
 				let peripheral: Peripheral = peripheralParts.peripheral as Peripheral;
 				let db: iSQLiteDatabase = this.getDatabase(peripheralParts.key);
 				db.transaction((transaction: iTransaction) => {
-					// todo peripheral and peripheral.getOldData()
-					this.insertDataIntoDataTable(peripheral, peripheral.getOldData(), transaction, (_tx: iTransaction, _result: any) => {
-						peripheral.deleteOldDataFromMemory();
+					// todo peripheral and peripheral.removeOldData()
+					this.insertDataIntoDataTable(peripheral, peripheral.removeOldData(), transaction, () => {
+						// console.log();
 					});
 
 				}, (error: Error) => {
@@ -153,11 +152,11 @@ export class DataManager implements iDataManager {
 		}
 	}
 
-	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void {
 		this.restoreAllDataFromTable(peripheral, DatabaseTable.DATA, transaction, callback);
 	}
 
-	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void {
+	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void {
 		this.restoreAllDataFromTable(peripheral, DatabaseTable.BACKUP, transaction, callback);
 	}
 

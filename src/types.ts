@@ -1,5 +1,4 @@
 import {iTransaction} from "./model/i_transaction";
-import {iPeripheral} from "./model/i_peripheral";
 import {Peripheral} from "./model/peripheral";
 import {ReactNode} from "react";
 import {ScaledSize} from "react-native";
@@ -7,118 +6,171 @@ import {PeripheralTileData} from "./view/peripheral_tile_data";
 import {PeripheralView} from "./view/peripheral_view";
 
 // enums
-export enum PeripheralType {SERVER = "SERVER", CLIENT = "CLIENT", EMPTY = "EMPTY"}
+export enum PeripheralType {
+	SERVER = "SERVER", CLIENT = "CLIENT", EMPTY = "EMPTY"
+}
 
-export enum ViewType {MAIN = "MAIN", PERIPHERAL = "PERIPHERAL", SETTINGS = "SETTINGS"}
+export enum ViewType {
+	MAIN = "MAIN", PERIPHERAL = "PERIPHERAL", SETTINGS = "SETTINGS"
+}
 
-export enum DatabaseTable {DATA = "DATA", BACKUP = "BACKUP"}
+export enum DatabaseTable {
+	DATA = "DATA", BACKUP = "BACKUP"
+}
 
 // generic
-export type ObjectLiteral<T> = {[key: string]: T};
+export interface ObjectLiteral<T> {
+	[key: string]: T;
+}
 
 export type Iterable<T> = Array<T> | ObjectLiteral<T>;
 
-export type Message = {data: Array<any>; type: string;};
+export interface Message {
+	data: Array<any>;
+	type: string;
+}
 
 export type MessageCallback = (message: Message) => void;
 
-export type Subscriber = {callback: SingleArgumentCallback; id: string};
+export interface Subscriber {
+	callback: SingleArgumentCallback;
+	id: string;
+}
 
-export type PeripheralPartsContainer = {peripheral: Peripheral | iPeripheral; view: Function; tile: Function; key: string};
+export interface PeripheralPartsContainer {
+	peripheral: Peripheral;
+	view: Function;
+	tile: Function;
+	key: string;
+}
 
-export type RequestDataPackage = {name: string; timestamp: number; data: any; peripheralType: PeripheralType;};
+export interface PeripheralPartsDeclaration {
+	peripheral: Function;
+	view: Function;
+	tile: Function;
+}
 
-export type ResponseDataPackage = {name: string; data: any; peripheralType: PeripheralType;};
+export interface RequestDataPackage {
+	name: string;
+	timestamp: number;
+	data: any;
+	peripheralType: PeripheralType;
+}
+
+export interface ResponseDataPackage {
+	name: string;
+	data: any;
+	peripheralType: PeripheralType;
+}
 
 export type ErrorCallback = (error: Error) => void;
 
-export type SingleArgumentCallback = (args?: any) => void;
+export type SingleArgumentCallback = (args: any) => void;
 
-export type WebSocketStartingSettings = {
+export interface WebSocketStartingSettings {
 	readonly host: string;
 	readonly port: number;
 	readonly path: string;
 	readonly reconnectionInterval: number;
-};
+}
 
-export type DataManagerStartingSettings = {readonly dataRetentionInterval: number;};
+export interface DataManagerStartingSettings {
+	readonly dataRetentionInterval: number;
+}
 
-export type WebSocketSettings = {
+export interface WebSocketSettings {
 	host: string;
 	port: number;
 	path: string;
 	reconnectionInterval: number;
-};
+}
 
-export type DataManagerSettings = {dataRetentionInterval: number;};
+export interface DataManagerSettings {
+	dataRetentionInterval: number;
+}
 
-export type Settings = {
+export interface Settings {
 	maxSkippedIntervals: number;
 	dataRequestInterval: number;
 	webSocket: WebSocketSettings;
 	dataManager: DataManagerSettings;
-};
+}
 
 export type UserDataStructure = any;
 
-export type Command = {
-	commandName: string,
-	commandData: any
-};
+export interface Command {
+	commandName: string;
+	commandData: any;
+}
 
 // sqLite
-export type TransactionCallback = (transaction: iTransaction) => void;
-
-// export type QueryResultCallback = (transaction: iTransaction, result: any) => void;
-export type QueryResultAsUserDataStructureCallback = (transaction: iTransaction, result: UserDataStructure) => void;
+export type TransactionCallback = (transaction: iTransaction, result?: UserDataStructure) => void;
 
 // react components
-export type MainViewProps = {
+export interface MainViewProps {
 	peripherals: Array<PeripheralPartsContainer>;
 	onPressTile: (view: ReactNode, peripheral: Peripheral) => void;
 	subscribeToLayoutChange: (callback: Function, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
-};
+}
 
-export type MainViewState = {peripherals: Array<PeripheralPartsContainer>};
+export interface MainViewState {
+	peripherals: Array<PeripheralPartsContainer>;
+}
 
-export type ViewContainerState = {
+export interface ViewContainerState {
 	readyToRender: boolean;
 	currentView: ViewType;
 	windowDimensions: ScaledSize;
 	hasIPAddress: boolean;
-};
+}
 
-export type MenuBarProps = {onPressHomeButton: Function; onPressSettingsButton: Function; subscribeOnViewChange: Function};
+export interface MenuBarProps {
+	onPressHomeButton: Function;
+	onPressSettingsButton: Function;
+	subscribeOnViewChange: Function;
+}
 
-export type PeripheralTileProps = {
+export interface PeripheralTileProps {
 	peripheral: Peripheral;
 	peripheralTileData: any;
 	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
 	onPressTile: Function;
-	key: string
-};
+	key: string;
+}
 
-export type PeripheralTileState = {windowDimensions: ScaledSize};
+export interface PeripheralTileState {
+	windowDimensions: ScaledSize;
+}
 
 export type PeripheralTileDataClass = typeof PeripheralTileData;
 
-export type PeripheralTileDataProps = {
+export interface PeripheralTileDataState {
+	data: any;
+	windowDimensions: ScaledSize;
+}
+
+export interface PeripheralTileTitleProps {
+	peripheralTitle: string;
+	style: any;
+}
+
+export interface PeripheralViewProps {
 	peripheral: Peripheral;
-	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
-};
+}
 
-export type PeripheralTileDataState = {data: any; windowDimensions: ScaledSize};
-
-export type PeripheralTileTitleProps = {peripheralTitle: string, style: any};
-
-export type PeripheralViewProps = {peripheral: Peripheral};
-
-export type PeripheralViewState = {data: any; status: any};
+export interface PeripheralViewState {
+	data: any;
+	status: any;
+}
 
 export type PeripheralViewClass = typeof PeripheralView;
 
-export type IPInputFieldProps = {setNewIP: (ip: string) => void;};
+export interface IPInputFieldProps {
+	setNewIP: (ip: string) => void;
+}
 
-export type IPInputFieldState = {text: string;};
+export interface IPInputFieldState {
+	text: string;
+}

@@ -8,18 +8,12 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 
 	private accelerationObservable: any;
 
-	constructor(name: string, type: PeripheralType) {
-		super(name, type);
+	constructor() {
+		super("Acceleration Sensor", PeripheralType.CLIENT);
 
 		this.accelerationObservable = new Sensors.Accelerometer({
 			updateInterval: 2000, // defaults to 100ms
 		});
-
-		this.readPeripheralData();
-
-	}
-
-	readPeripheralData(): void {
 
 		this.accelerationObservable
 			.map(({x, y, z }: {x: number; y: number; z: number}) => x + y + z)
@@ -29,6 +23,7 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 					acceleration: speed
 				}]));
 			});
+
 	}
 
 	getTileData(): any {
@@ -39,11 +34,7 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 		return this.getData();
 	}
 
-	getSettingsData(): any {
-		return {};
-	}
-
-	getOldData(): Array<UserDataStructure> {
+	removeOldData(): Array<UserDataStructure> {
 		return this.getData();
 	}
 

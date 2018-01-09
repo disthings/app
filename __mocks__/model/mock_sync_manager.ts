@@ -94,7 +94,7 @@ export class SyncManager implements iSyncManager {
 		const subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketReady");
 		if(subs) {
 			subs.forEach((subscriber: Subscriber) => {
-				subscriber.callback();
+				subscriber.callback({});
 			});
 		}
 	}
@@ -103,7 +103,7 @@ export class SyncManager implements iSyncManager {
 		const subs: Array<Subscriber> = this.getIncomingMessageSubscribers("onSocketDisconnect");
 		if(subs) {
 			subs.forEach((subscriber: Subscriber) => {
-				subscriber.callback();
+				subscriber.callback({});
 			});
 		}
 	}

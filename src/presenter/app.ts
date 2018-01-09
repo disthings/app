@@ -3,7 +3,7 @@ import {iSyncManager} from "../model/i_synchronization_manager";
 import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
-import {Message, UserDataStructure} from "../types";
+import {Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage, ResponseDataPackage, Settings, ViewType
 } from "../types";
@@ -193,8 +193,17 @@ export class App implements iApp {
 		this.stopWaitingForServer();
 	}
 
-	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-		const type: PeripheralType = (peripheralPartsContainer.peripheral as Peripheral).getType();
+	addPeripheral(peripheralPartsDeclaration: PeripheralPartsDeclaration): void {
+
+		const peripheral: Peripheral = new (peripheralPartsDeclaration.peripheral as any);
+		const type: PeripheralType = peripheral.getType();
+		const peripheralPartsContainer: PeripheralPartsContainer = {
+			peripheral: peripheral,
+			view: peripheralPartsDeclaration.view,
+			tile: peripheralPartsDeclaration.tile,
+			key: peripheral.getName()
+		};
+
 		if(type === PeripheralType.SERVER) {
 			this.addServerPeripheral(peripheralPartsContainer);
 		}

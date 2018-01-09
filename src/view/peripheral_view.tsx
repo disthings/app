@@ -1,12 +1,12 @@
 import * as React from "react";
 import {Peripheral} from "../model/peripheral";
-import {PeripheralViewProps, PeripheralViewState, SingleArgumentCallback} from "../types";
+import {Command, PeripheralViewState, SingleArgumentCallback} from "../types";
 
 /*
 Extend this class to create the view for your peripheral.
  */
-export abstract class PeripheralView<K extends PeripheralViewProps, L extends PeripheralViewState>
-	extends React.Component<PeripheralViewProps, PeripheralViewState> {
+export abstract class PeripheralView<K extends any, L extends PeripheralViewState>
+	extends React.Component<any, PeripheralViewState> {
 
 	private peripheral: Peripheral;
 	private subscriberID: string;
@@ -44,6 +44,13 @@ export abstract class PeripheralView<K extends PeripheralViewProps, L extends Pe
 	 */
 	unsubscribeFromEvent(eventName: string, id: string): void {
 		this.peripheral.unsubscribeFromEvent(eventName, id);
+	}
+
+	/*
+	Send a command to the peripheral
+	 */
+	sendCommand(command: Command): void {
+		this.peripheral.sendCommand(command);
 	}
 
 }

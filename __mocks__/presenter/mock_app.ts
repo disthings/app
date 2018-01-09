@@ -5,7 +5,7 @@ import {iDataManager} from "../../src/model/i_data_manager";
 import {DataManager} from "../model/mock_data_manager";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage,
-	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure
+	ResponseDataPackage, Settings, ViewType, Message, UserDataStructure, PeripheralPartsDeclaration
 } from "../../src/types";
 import {iSQLiteDatabase} from "../../src/model/i_sqlite_database";
 import Timer = NodeJS.Timer;
@@ -172,8 +172,17 @@ export class App implements iApp {
 		this.onReadyToRenderCallback = callback;
 	}
 
-	addPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {
-		const type: PeripheralType = (peripheralPartsContainer.peripheral as Peripheral).getType();
+	addPeripheral(peripheralPartsDeclaration: PeripheralPartsDeclaration): void {
+
+		const peripheral: Peripheral = new (peripheralPartsDeclaration.peripheral as any);
+		const type: PeripheralType = peripheral.getType();
+		const peripheralPartsContainer: PeripheralPartsContainer = {
+			peripheral: peripheral,
+			view: peripheralPartsDeclaration.view,
+			tile: peripheralPartsDeclaration.tile,
+			key: peripheral.getName()
+		};
+
 		if(type === PeripheralType.SERVER) {
 			this.addServerPeripheral(peripheralPartsContainer);
 		}

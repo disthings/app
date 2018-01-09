@@ -1,6 +1,6 @@
 import {LightSensor} from "./server/light_sensor/light_sensor";
 import {AccelerationSensor} from "./client/acceleration_sensor/acceleration_sensor";
-import {PeripheralPartsContainer, PeripheralType} from "../types";
+import {PeripheralPartsDeclaration} from "../types";
 import {AccelerationSensorTileData} from "./client/acceleration_sensor/tile_data";
 import {LightSensorTileData} from "./server/light_sensor/tile_data";
 import {LightView} from "./server/light_sensor/view";
@@ -10,7 +10,7 @@ import {AccelerationSensorView} from "./client/acceleration_sensor/view";
 This is were the peripherals are declared. This exported array is being read by the ViewContainer and added to the App.
  */
 
-let peripherals: Array<PeripheralPartsContainer> = [];
+let peripherals: Array<PeripheralPartsDeclaration> = [];
 
 /*
 To add your peripheral, create a PeripheralPartsContainer. Take note that under 'view' and 'tile' you have to
@@ -19,15 +19,13 @@ The framework manages the instantiation.
  */
 
 peripherals.push({
-	key: "Acceleration Sensor",
-	peripheral: new AccelerationSensor("Acceleration Sensor", PeripheralType.CLIENT),
+	peripheral: AccelerationSensor,
 	view: AccelerationSensorView,
 	tile: AccelerationSensorTileData
 });
 
 peripherals.push({
-	key: "light_sensor",
-	peripheral: new LightSensor("light_sensor", PeripheralType.SERVER),
+	peripheral: LightSensor,
 	view: LightView,
 	tile: LightSensorTileData
 });

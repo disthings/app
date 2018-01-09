@@ -1,12 +1,11 @@
 import * as React from "react";
 import {PeripheralTileData} from "../../../view/peripheral_tile_data";
 import {Text, View} from "react-native";
-import {PeripheralTileDataProps, PeripheralTileDataState} from "../../../types";
+import {PeripheralTileDataState} from "../../../types";
 
-export class AccelerationSensorTileData<K extends PeripheralTileDataProps, L extends PeripheralTileDataState>
-	extends PeripheralTileData<PeripheralTileDataProps, PeripheralTileDataState> {
+export class AccelerationSensorTileData	extends PeripheralTileData<any, PeripheralTileDataState> {
 
-	constructor(props: K, state: L) {
+	constructor(props: any, state: any) {
 		super(props, state);
 	}
 

@@ -1,8 +1,5 @@
 import {iSQLiteDatabase} from "./i_sqlite_database";
-import {
-	ErrorCallback, PeripheralPartsContainer, QueryResultAsUserDataStructureCallback,
-	UserDataStructure
-} from "../types";
+import {ErrorCallback, PeripheralPartsContainer, TransactionCallback, UserDataStructure} from "../types";
 import {iTransaction} from "./i_transaction";
 import {Peripheral} from "./peripheral";
 
@@ -18,8 +15,8 @@ export interface iDataManager {
 							callback: Function): void;
 	insertPeripheralDataIntoBackupTable(peripheral: Peripheral, data: Array<UserDataStructure>, transaction: iTransaction,
 										callback: Function): void;
-	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
-	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: QueryResultAsUserDataStructureCallback): void;
+	restoreAllDataFromDataTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void;
+	restorePeripheralDataFromBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: TransactionCallback): void;
 	emptyDataTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 	emptyBackupTable(peripheral: Peripheral, transaction: iTransaction, callback: Function): void;
 }

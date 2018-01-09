@@ -14,7 +14,7 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 		console.warn("You created an EmptyPeripheral named: " + name + ". Please check the class for more information.");
 	}
 
-	getOldData(): UserDataStructure {
+	removeOldData(): UserDataStructure {
 		return {};
 	}
 
@@ -30,10 +30,6 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 		return {};
 	}
 
-	getSettingsData(): any {
-		return {};
-	}
-
 	getRequestDataPackage(): RequestDataPackage {
 		return {
 			name: "EmptyPeripheral",
@@ -41,10 +37,6 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 			data: {},
 			peripheralType: PeripheralType.EMPTY
 		};
-	}
-
-	deleteOldDataFromMemory(): void {
-		return;
 	}
 
 	initializeData(): void {
