@@ -12,12 +12,12 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 		super("Acceleration Sensor", PeripheralType.CLIENT);
 
 		this.accelerationObservable = new Sensors.Accelerometer({
-			updateInterval: 2000, // defaults to 100ms
+			updateInterval: 400, // defaults to 100ms
 		});
 
 		this.accelerationObservable
 			.map(({x, y, z }: {x: number; y: number; z: number}) => x + y + z)
-			.filter((speed: number) => speed > 20)
+			.filter((speed: number) => speed > 10)
 			.subscribe((speed: number) => {
 				this.setData(this.getData().concat([{
 					acceleration: speed
@@ -35,10 +35,8 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 	}
 
 	removeOldData(): Array<UserDataStructure> {
-		return this.getData();
-	}
-
-	deleteOldDataFromMemory(): void {
+		let oldData: Array<UserDataStructure> = [].concat(this.getData()[0]);
 		this.setData([]);
+		return oldData;
 	}
 }
