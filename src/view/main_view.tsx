@@ -11,7 +11,6 @@ export class MainView<K extends MainViewProps, L extends MainViewState> extends 
 
 	constructor(props: K, state: L) {
 		super(props, state);
-
 		this.state = {
 			peripherals: this.props.peripherals
 		};
@@ -24,10 +23,14 @@ export class MainView<K extends MainViewProps, L extends MainViewState> extends 
 			<PeripheralTile key={(item.peripheral as Peripheral).getName()}
 							subscribeToLayoutChange={this.props.subscribeToLayoutChange}
 							unsubscribeFromLayoutChange={this.props.unsubscribeFromLayoutChange}
+							subscribeToThemeChange={this.props.subscribeToThemeChange}
+							unsubscribeFromThemeChange={this.props.unsubscribeFromThemeChange}
 							onPressTile={() => {
 								this.props.onPressTile(item.view, item.peripheral as Peripheral);
 							}}
-							peripheralTileData={item.tile} peripheral={item.peripheral as Peripheral}/>
+							peripheralTileData={item.tile} peripheral={item.peripheral as Peripheral}
+							currentColorTheme={this.props.currentColorTheme}
+			/>
 		));
 
 		return (<ScrollView>

@@ -3,7 +3,7 @@ import {iSyncManager} from "../model/i_synchronization_manager";
 import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
-import {iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
+import {Color, iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage, ResponseDataPackage, Settings, ViewType
 } from "../types";
@@ -15,6 +15,7 @@ import {Peripheral} from "../model/peripheral";
 import {SettingsManager} from "../model/settings_manager";
 import {StartingSettings} from "../starting_settings";
 import {errorCallback, forEachAsync} from "../generic_functions";
+import {ColorThemeManager} from "./color_theme_manager";
 
 /*
 This class manages the communication between the backend and the frontend. It is responsible for the activation of
@@ -24,6 +25,7 @@ export class App implements iApp {
 
 	private syncManager: iSyncManager;
 	private dataManager: iDataManager;
+	private colorThemeManager: ColorThemeManager;
 	private currentViewType: ViewType;
 	private currentPeripheral: Peripheral;
 	private isWaiting: boolean;
@@ -49,8 +51,8 @@ export class App implements iApp {
 
 		this.dataManager = new DataManager();
 
-		SettingsManager.getRuntimeSettings((_error: Error, result: StartingSettings) => {
 
+		SettingsManager.getRuntimeSettings((_error: Error, result: StartingSettings) => {
 			if(result) { // if there are already saved settings
 				this.settings = result;
 			}
@@ -58,7 +60,7 @@ export class App implements iApp {
 				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.resetSettings(errorCallback);
 			}
-
+			this.colorThemeManager = new ColorThemeManager(this.settings.currentColor);
 			this.maxSkippedIntervals = this.settings.maxSkippedIntervals;
 			this.dataRequestInterval = this.settings.dataRequestInterval;
 			this.didSettingsLoad = true;
@@ -465,5 +467,17 @@ export class App implements iApp {
 				}
 			}, errorCallback);
 		});
+	}
+
+	getCurrentColorTheme(): Color {
+		return this.colorThemeManager.getCurrentColorTheme();
+	}
+
+	getAllColorThemes(): Array<string> {
+		return this.colorThemeManager.getAllColorThemes();
+	}
+
+	loadColorTheme(name: string): any {
+		return this.colorThemeManager.loadColorTheme(name);
 	}
 }

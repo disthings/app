@@ -1,6 +1,6 @@
 import {AsyncStorage} from "react-native";
 import {StartingSettings} from "../starting_settings";
-import {Settings} from "../types";
+import {ErrorCallback, Settings} from "../types";
 
 /*
 This is a wrapper class around AsyncStorage. It is used to manage the application settings.
@@ -17,11 +17,19 @@ export class SettingsManager {
 
 	static getRuntimeSettings(callback: (error: Error, result: Settings) => void): void {
 		AsyncStorage.getItem("settings", (error: Error, result: string) => {
-			callback(error, JSON.parse(result));
+
+			const startingSettings: StartingSettings = this.getStartingSettings();
+			const mergedSettings: any = Object.assign(startingSettings, JSON.parse(result));
+
+			callback(error, mergedSettings);
 		});
 	}
 
-	static resetSettings(callback: (error: Error) => void): void {
+	static resetSettings(callback: ErrorCallback): void {
 		SettingsManager.setRuntimeSettings(StartingSettings.getInstance(), callback);
+	}
+
+	static loadMissingSettings(_callback: Function): void {
+
 	}
 }

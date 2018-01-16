@@ -20,6 +20,8 @@ export class StartingSettings {
 		dataRetentionInterval: 10000
 	};
 
+	readonly currentColor: string = "standard";
+
 	constructor() {
 		if(StartingSettings.instance) {
 			throw new Error("Error: Instantiation failed: Use SingletonDemo.getInstance() instead of new.");

@@ -98,6 +98,15 @@ export interface Settings {
 	dataRequestInterval: number;
 	webSocket: WebSocketSettings;
 	dataManager: DataManagerSettings;
+	currentColor: string;
+}
+
+export interface Colors {
+	[key: string]: {};
+}
+
+export interface Color {
+	[key: string]: {};
 }
 
 export type UserDataStructure = any;
@@ -116,6 +125,9 @@ export interface MainViewProps {
 	onPressTile: (view: ReactNode, peripheral: Peripheral) => void;
 	subscribeToLayoutChange: (callback: Function, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
+	currentColorTheme: any;
+	subscribeToThemeChange: (callback: Function, id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
 }
 
 export interface MainViewState {
@@ -130,9 +142,11 @@ export interface ViewContainerState {
 }
 
 export interface MenuBarProps {
+	currentColorTheme: any;
 	onPressHomeButton: Function;
 	onPressSettingsButton: Function;
 	subscribeOnViewChange: Function;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
 }
 
 export interface PeripheralTileProps {
@@ -140,12 +154,16 @@ export interface PeripheralTileProps {
 	peripheralTileData: any;
 	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
 	onPressTile: Function;
 	key: string;
+	currentColorTheme: any;
 }
 
 export interface PeripheralTileState {
 	windowDimensions: ScaledSize;
+	currentColorTheme: any;
 }
 
 export type PeripheralTileDataClass = typeof PeripheralTileData;
@@ -173,8 +191,18 @@ export type PeripheralViewClass = typeof PeripheralView;
 
 export interface IPInputFieldProps {
 	setNewIP: (ip: string) => void;
+	currentColorTheme: any;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
 }
 
 export interface IPInputFieldState {
 	text: string;
+	currentColorTheme: any;
+}
+
+export interface SettingsViewProps {
+	allColorThemes: Array<string>;
+	currentThemeName: string;
+	onThemeChosen: Function;
 }

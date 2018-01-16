@@ -97,7 +97,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		this.publisher.informEventSubscribers("onViewChange", ViewType.SETTINGS);
 	}
 
-	onLayout(_event: Event): void {
+	onLayout(): void {
 		this.publisher.informEventSubscribers("onLayout");
 	}
 
@@ -109,18 +109,35 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		this.publisher.unsubscribeFromEvent("onLayout", id);
 	}
 
+	onTheme(theme: any): void {
+		this.publisher.informEventSubscribers("onTheme", theme);
+	}
+
+	subscribeToThemeChange(callback: SingleArgumentCallback, id: string): void {
+		this.publisher.subscribeToEvent("onTheme", callback, id);
+	}
+
+	unsubscribeFromThemeChange(id: string): void {
+		this.publisher.unsubscribeFromEvent("onTheme", id);
+	}
+
 	subscribeOnViewChange(callback: SingleArgumentCallback, subscriberID: string): void {
 		this.publisher.subscribeToEvent("onViewChange", callback, subscriberID);
 	}
 
 	private showIpInputField(): ReactNode {
-		return (<View style={styles.IPview} onLayout={this.onLayout.bind(this)}>
-			<IPInputField setNewIP={(ip: string) => {
-				this.app.setConnectingIP(ip);
-				this.setState({
-					hasIPAddress: true
-				});
-			}}/>
+		return (<View style={styles.IPviewContainer} onLayout={this.onLayout.bind(this)}>
+			<IPInputField
+				setNewIP={(ip: string) => {
+					this.app.setConnectingIP(ip);
+					this.setState({
+						hasIPAddress: true
+					});
+				}}
+				currentColorTheme={this.app.getCurrentColorTheme()}
+				subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
+				unsubscribeFromThemeChange={this.unsubscribeFromThemeChange.bind(this)}
+			/>
 		</View>);
 	}
 
@@ -132,33 +149,46 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 
 		switch(this.state.currentView) {
 			case ViewType.SETTINGS:
-				this.currentView = <SettingsView/>;
+				this.currentView = <SettingsView
+					allColorThemes={this.app.getAllColorThemes()}
+					currentThemeName={this.app.getCurrentColorTheme().name as string}
+					onThemeChosen={(themeName: string) => {
+						const colorTheme: any = this.app.loadColorTheme(themeName);
+						this.onTheme(colorTheme);
+					}}
+				/>;
 				break;
 			case ViewType.MAIN:
 				this.currentView = <MainView peripherals={joinedPeripherals}
 											 subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}
 											 unsubscribeFromLayoutChange={this.unsubscribeFromLayoutChange.bind(this)}
+											 subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
+											 unsubscribeFromThemeChange={this.unsubscribeFromThemeChange.bind(this)}
 											 onPressTile={(SomePeripheralView: PeripheralViewClass, peripheral: Peripheral) => {
 												 // it is important that SomePeripheralView is starting with a capital letter,
 												 // or else JSX won't recognize it.
 												 this.currentView = <SomePeripheralView peripheral={peripheral}/>;
 												 this.showPeripheralView(peripheral);
-											 }}/>;
+											 }}
+											 currentColorTheme={this.app.getCurrentColorTheme()}
+				/>;
 				break;
 		}
 	}
 
 	render(): React.ReactNode {
-
 		if(this.state.readyToRender) {
 			if(this.state.hasIPAddress) {
 				this.createCurrentView();
+
 				return (
 					<View onLayout={this.onLayout.bind(this)}>
 
 						<MenuBar onPressHomeButton={() => {this.showMainView();}}
 								 onPressSettingsButton={() => {this.showSettingsView();}}
 								 subscribeOnViewChange={this.subscribeOnViewChange.bind(this)}
+								 subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
+								 currentColorTheme={this.app.getCurrentColorTheme()}
 						/>
 
 						{this.currentView /* This is a JSX Object */}
@@ -176,7 +206,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 }
 
 const styles: any = StyleSheet.create({
-	IPview: {
+	IPviewContainer: {
 		marginLeft: 50,
 		marginRight: 50,
 		marginTop: 100,
