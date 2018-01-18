@@ -1,6 +1,5 @@
-import {Colors, ColorTheme, ObjectLiteral} from "../types";
+import {Colors, ColorTheme} from "../types";
 const colors: Colors = require("../resources/colors");
-const peripheralColors: ObjectLiteral<any> = require("../peripherals/peripherals_colors");
 
 export class ColorThemeManager {
 
@@ -20,10 +19,5 @@ export class ColorThemeManager {
 
 	getAllColorThemes(): Array<string> {
 		return Object.keys(colors);
-	}
-
-	getPeripheralColorTheme(peripheralName: string): any {
-		const currentColorThemeName: string = this.currentColorTheme.name;
-		return peripheralColors[peripheralName + "_" + currentColorThemeName];
 	}
 }

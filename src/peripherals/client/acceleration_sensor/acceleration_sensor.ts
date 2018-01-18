@@ -26,11 +26,11 @@ export class AccelerationSensor extends Peripheral implements iClientPeripheral 
 
 	}
 
-	getTileData(): any {
+	getTileData(): UserDataStructure {
 		return this.getData();
 	}
 
-	getViewData(): any {
+	getViewData(): UserDataStructure {
 		return this.getData();
 	}
 

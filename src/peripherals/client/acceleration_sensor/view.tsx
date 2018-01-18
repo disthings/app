@@ -9,6 +9,11 @@ export class AccelerationSensorView extends PeripheralView<PeripheralViewProps, 
 		super(props, state);
 	}
 
+
+	onLayoutChange(_layout: string): void {
+		return;
+	}
+
 	render(): React.ReactNode {
 		let value: string = this.state.data ? JSON.stringify(this.state.data, null, "\t") : "No available data";
 		return (<View>

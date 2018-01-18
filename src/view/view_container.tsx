@@ -165,21 +165,26 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 				/>;
 				break;
 			case ViewType.MAIN:
-				this.currentView = <MainView peripherals={joinedPeripherals}
-											 subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}
-											 unsubscribeFromLayoutChange={this.unsubscribeFromLayoutChange.bind(this)}
-											 subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
-											 unsubscribeFromThemeChange={this.unsubscribeFromThemeChange.bind(this)}
-											 onPressTile={(SomePeripheralView: PeripheralViewClass, peripheral: Peripheral) => {
-												 // it is important that SomePeripheralView is starting with a capital letter,
-												 // or else JSX won't recognize it.
-												 this.currentView = <SomePeripheralView
-													 peripheral={peripheral}
-													 currentThemeName={this.app.getCurrentColorTheme().name}
-												 />;
-												 this.showPeripheralView(peripheral);
-											 }}
-											 currentColorTheme={this.app.getCurrentColorTheme()}
+				this.currentView = <MainView
+					peripherals={joinedPeripherals}
+					subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}
+					unsubscribeFromLayoutChange={this.unsubscribeFromLayoutChange.bind(this)}
+					subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
+					unsubscribeFromThemeChange={this.unsubscribeFromThemeChange.bind(this)}
+					onPressTile={(SomePeripheralView: PeripheralViewClass, peripheral: Peripheral) => {
+					// it is important that SomePeripheralView is starting with a capital letter,
+					// or else JSX won't recognize it
+					this.currentView = <SomePeripheralView
+										 peripheral={peripheral}
+										 currentThemeName={this.app.getCurrentColorTheme().name}
+										 subscribeToLayoutChange={this.subscribeToLayoutChange.bind(this)}
+										 subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
+										 unsubscribeFromLayoutChange={this.unsubscribeFromLayoutChange.bind(this)}
+										 unsubscribeFromThemeChange={this.unsubscribeFromThemeChange.bind(this)}
+									 />;
+					this.showPeripheralView(peripheral);
+					}}
+					currentColorTheme={this.app.getCurrentColorTheme()}
 				/>;
 				break;
 		}

@@ -15,14 +15,18 @@ export class LightView extends PeripheralView<any, PeripheralViewState> {
 		});
 	}
 
+
+	onLayoutChange(_layout: string): void {
+		return;
+	}
+
 	render(): React.ReactNode {
 
 		let value: string = this.state.data ? JSON.stringify(this.state.data, null, "\t") : "No available data";
-
 		return (<View>
 			<Text>Level: {value}</Text>
 			<Button onPress={() => {
-				this.sendCommand({
+				this.sendCommandToPeripheral({
 					commandName: this.state.status.isOn ? "off" : "on",
 					commandData: {}
 				});

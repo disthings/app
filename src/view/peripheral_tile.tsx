@@ -109,6 +109,9 @@ export class PeripheralTile<K extends PeripheralTileProps, L extends PeripheralT
 						<TileData
 							peripheral={this.props.peripheral}
 							subscribeToLayoutChange={this.props.subscribeToLayoutChange}
+							unsubscribeFromLayoutChange={this.props.unsubscribeFromLayoutChange}
+							subscribeToThemeChange={this.props.subscribeToThemeChange}
+							unsubscribeFromThemeChange={this.props.unsubscribeFromThemeChange}
 							currentThemeName={this.props.currentColorTheme.name}
 						/>
 					</View>

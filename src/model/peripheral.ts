@@ -93,10 +93,10 @@ export abstract class Peripheral {
 	/*
 	Implement this method to sort through the data array and return the data you want to show on the tile.
 	 */
-	abstract getTileData(): any;
+	abstract getTileData(): UserDataStructure;
 
 	/*
 	Implement this method to sort through the data array and return the data you want to show on the view.
 	 */
-	abstract getViewData(): any;
+	abstract getViewData(): UserDataStructure;
 }

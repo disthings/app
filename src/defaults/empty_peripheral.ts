@@ -22,11 +22,11 @@ export class EmptyPeripheral extends Peripheral implements iClientPeripheral, iS
 		return;
 	}
 
-	getTileData(): any {
+	getTileData(): UserDataStructure {
 		return {};
 	}
 
-	getViewData(): any {
+	getViewData(): UserDataStructure {
 		return {};
 	}
 

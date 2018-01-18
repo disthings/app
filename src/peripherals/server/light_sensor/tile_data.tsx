@@ -9,6 +9,10 @@ export class LightSensorTileData extends PeripheralTileData<any, PeripheralTileD
 		super(props, state);
 	}
 
+	onLayoutChange(_layout: string): void {
+		return;
+	}
+
 	render(): React.ReactNode {
 
 		let value: number = this.state.data.length > 0 ? this.state.data[this.state.data.length - 1].data : 0;

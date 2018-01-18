@@ -119,10 +119,10 @@ export type TransactionCallback = (transaction: iTransaction, result?: UserDataS
 export interface MainViewProps {
 	peripherals: Array<PeripheralPartsContainer>;
 	onPressTile: (view: ReactNode, peripheral: Peripheral) => void;
-	subscribeToLayoutChange: (callback: Function, id: string) => void;
+	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
 	currentColorTheme: ColorTheme;
-	subscribeToThemeChange: (callback: Function, id: string) => void;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
 	unsubscribeFromThemeChange: (id: string) => void;
 }
 
@@ -171,19 +171,33 @@ export interface PeripheralTileDataState {
 	currentThemeName: string;
 }
 
+export interface PeripheralTileDataProps {
+	peripheral: Peripheral;
+	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
+	currentThemeName: string;
+	unsubscribeFromLayoutChange: (id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
+}
+
 export interface PeripheralTileTitleProps {
 	peripheralTitle: string;
 	style: any;
-}
-
-export interface PeripheralViewProps {
-	peripheral: Peripheral;
 }
 
 export interface PeripheralViewState {
 	data: any;
 	status: any;
 	currentThemeName: string;
+}
+
+export interface PeripheralViewProps {
+	peripheral: Peripheral;
+	currentThemeName: string;
+	subscribeToLayoutChange: (callback: SingleArgumentCallback, id: string) => void;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
+	unsubscribeFromLayoutChange: (id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
 }
 
 export type PeripheralViewClass = typeof PeripheralView;

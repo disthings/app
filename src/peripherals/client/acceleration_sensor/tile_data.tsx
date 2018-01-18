@@ -9,11 +9,14 @@ export class AccelerationSensorTileData	extends PeripheralTileData<any, Peripher
 		super(props, state);
 	}
 
+	onLayoutChange(_layout: string): void {
+		return;
+	}
+
 	render(): React.ReactNode {
 
 		let data: any = this.state.data;
 		let text: string = data.length > 0 ? "Acceleration: " + data[0].acceleration : "No rapid movement";
-
 		return (<View>
 				<Text>{text}</Text>
 			</View>);

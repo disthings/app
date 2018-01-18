@@ -1,4 +1,6 @@
+import {UserDataStructure} from "../types";
+
 export interface iPeripheral {
-	getTileData(): any;
-	getViewData(): any;
+	getTileData(): UserDataStructure;
+	getViewData(): UserDataStructure;
 }
