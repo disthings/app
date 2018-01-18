@@ -19,7 +19,8 @@ export abstract class PeripheralView<K extends any, L extends PeripheralViewStat
 
 		this.state = {
 			data: props.peripheral.getViewData(),
-			status: {}
+			status: {},
+			currentThemeName: props.currentThemeName
 		};
 
 		props.peripheral.subscribeToEvent("newData", () => {

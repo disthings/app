@@ -98,15 +98,11 @@ export interface Settings {
 	dataRequestInterval: number;
 	webSocket: WebSocketSettings;
 	dataManager: DataManagerSettings;
-	currentColor: string;
+	currentTheme: string;
 }
 
 export interface Colors {
-	[key: string]: {};
-}
-
-export interface Color {
-	[key: string]: {};
+	[key: string]: ColorTheme;
 }
 
 export type UserDataStructure = any;
@@ -125,7 +121,7 @@ export interface MainViewProps {
 	onPressTile: (view: ReactNode, peripheral: Peripheral) => void;
 	subscribeToLayoutChange: (callback: Function, id: string) => void;
 	unsubscribeFromLayoutChange: (id: string) => void;
-	currentColorTheme: any;
+	currentColorTheme: ColorTheme;
 	subscribeToThemeChange: (callback: Function, id: string) => void;
 	unsubscribeFromThemeChange: (id: string) => void;
 }
@@ -139,10 +135,11 @@ export interface ViewContainerState {
 	currentView: ViewType;
 	windowDimensions: ScaledSize;
 	hasIPAddress: boolean;
+	backgroundColor: string;
 }
 
 export interface MenuBarProps {
-	currentColorTheme: any;
+	currentColorTheme: ColorTheme;
 	onPressHomeButton: Function;
 	onPressSettingsButton: Function;
 	subscribeOnViewChange: Function;
@@ -158,12 +155,12 @@ export interface PeripheralTileProps {
 	unsubscribeFromThemeChange: (id: string) => void;
 	onPressTile: Function;
 	key: string;
-	currentColorTheme: any;
+	currentColorTheme: ColorTheme;
 }
 
 export interface PeripheralTileState {
 	windowDimensions: ScaledSize;
-	currentColorTheme: any;
+	currentColorTheme: ColorTheme;
 }
 
 export type PeripheralTileDataClass = typeof PeripheralTileData;
@@ -171,6 +168,7 @@ export type PeripheralTileDataClass = typeof PeripheralTileData;
 export interface PeripheralTileDataState {
 	data: any;
 	windowDimensions: ScaledSize;
+	currentThemeName: string;
 }
 
 export interface PeripheralTileTitleProps {
@@ -185,24 +183,83 @@ export interface PeripheralViewProps {
 export interface PeripheralViewState {
 	data: any;
 	status: any;
+	currentThemeName: string;
 }
 
 export type PeripheralViewClass = typeof PeripheralView;
 
 export interface IPInputFieldProps {
 	setNewIP: (ip: string) => void;
-	currentColorTheme: any;
+	currentColorTheme: ColorTheme;
 	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
 	unsubscribeFromThemeChange: (id: string) => void;
 }
 
 export interface IPInputFieldState {
 	text: string;
-	currentColorTheme: any;
+	currentColorTheme: ColorTheme;
 }
 
 export interface SettingsViewProps {
 	allColorThemes: Array<string>;
 	currentThemeName: string;
 	onThemeChosen: Function;
+}
+
+export interface SettingsViewState {
+	allColorThemes: Array<string>;
+	currentThemeName: string;
+}
+
+export interface ColorTheme {
+	name: string;
+	viewContainer: ViewContainerStyle;
+	ipInputField: IPInputFieldStyle;
+	menuBar: MenuBarStyle;
+	peripheralTile: PeripheralTileStyle;
+}
+
+export interface ViewContainerStyle {
+	backgroundColor: string;
+}
+
+export interface IPInputFieldStyle {
+	view: {
+		backgroundColor: string,
+		borderColor: string
+	};
+	button: {
+		borderColor: string
+	};
+	okButton: {
+		backgroundColor: string
+	};
+	cancelButton: {
+		backgroundColor: string
+	};
+}
+
+export interface MenuBarStyle {
+	button: {
+		backgroundColor: string,
+		borderColor: string
+	};
+	selectedButtonText: {
+		color: string
+	};
+	text: {
+		color: string
+	};
+}
+
+export interface PeripheralTileStyle {
+	tile: {
+		borderColor: string,
+		backgroundColorClient: string,
+		backgroundColorServer: string
+	};
+	title: {
+		borderColor: string,
+		color: string
+	};
 }

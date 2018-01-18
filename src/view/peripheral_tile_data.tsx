@@ -21,7 +21,8 @@ export abstract class PeripheralTileData<K extends any, L extends PeripheralTile
 
 		this.state = {
 			data: props.peripheral.getTileData(),
-			windowDimensions: Dimensions.get("window")
+			windowDimensions: Dimensions.get("window"),
+			currentThemeName: props.currentThemeName
 		};
 
 		props.peripheral.subscribeToEvent("newData", () => {

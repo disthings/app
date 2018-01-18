@@ -1,6 +1,6 @@
 import * as React from "react";
 import {View, TextInput, Text, TouchableOpacity, StyleSheet} from "react-native";
-import {IPInputFieldProps, IPInputFieldState} from "../types";
+import {ColorTheme, IPInputFieldProps, IPInputFieldState, IPInputFieldStyle} from "../types";
 import {Toast} from "../js_to_typescript_adapters/react_native_root_toast";
 import {isValidIPv4} from "../generic_functions";
 
@@ -16,13 +16,13 @@ export class IPInputField<K extends IPInputFieldProps, L extends IPInputFieldSta
 			currentColorTheme: props.currentColorTheme
 		};
 
-		props.subscribeToThemeChange((theme: any) => {
+		props.subscribeToThemeChange((theme: ColorTheme) => {
 			this.setState({
 				currentColorTheme: theme
 			});
 		}, "ip_input_field");
 
-		const ipInputFieldStyle: any = this.state.currentColorTheme.ipInputField;
+		const ipInputFieldStyle: IPInputFieldStyle = this.state.currentColorTheme.ipInputField;
 
 		this.styles = StyleSheet.create({
 			view: {

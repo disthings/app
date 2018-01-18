@@ -1,13 +1,14 @@
 import * as React from "react";
 import {ReactNode} from "react";
 import {Picker, Text, View} from "react-native";
-import {SettingsViewProps} from "../types";
+import {SettingsViewProps, SettingsViewState} from "../types";
 
 /*
 Here will be shown the app settings, and eventually also settings for each peripheral (if there are any, the developers
 defines it)
  */
-export class SettingsView<K extends SettingsViewProps, L extends any> extends React.Component<SettingsViewProps, any> {
+export class SettingsView<K extends SettingsViewProps, L extends SettingsViewState>
+	extends React.Component<SettingsViewProps, SettingsViewState> {
 
 
 	constructor(props: K, state: L) {
@@ -19,7 +20,7 @@ export class SettingsView<K extends SettingsViewProps, L extends any> extends Re
 	}
 
 	createThemePicker(): ReactNode {
-		const themeItem: any = this.state.allColorThemes.map((item: any) => (
+		const themeItems: ReactNode = this.state.allColorThemes.map((item: string) => (
 			<Picker.Item key={item}
 						 label={item}
 						 value={item}
@@ -36,7 +37,7 @@ export class SettingsView<K extends SettingsViewProps, L extends any> extends Re
 							this.props.onThemeChosen(itemValue);
 						}
 					}>
-					{themeItem}
+					{themeItems}
 				</Picker>
 			</View>
 		);

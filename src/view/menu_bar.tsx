@@ -1,6 +1,6 @@
 import * as React from "react";
 import {TouchableOpacity, StyleSheet, View, Text} from "react-native";
-import {MenuBarProps, ViewType} from "../types";
+import {ColorTheme, MenuBarProps, MenuBarStyle, ViewType} from "../types";
 
 export class MenuBar<K extends MenuBarProps, L extends any> extends React.Component<MenuBarProps, any> {
 
@@ -8,6 +8,7 @@ export class MenuBar<K extends MenuBarProps, L extends any> extends React.Compon
 
 	constructor(props: K, state: L) {
 		super(props, state);
+
 		this.state = {
 			currentView: ViewType.MAIN,
 			currentColorTheme: props.currentColorTheme
@@ -19,7 +20,7 @@ export class MenuBar<K extends MenuBarProps, L extends any> extends React.Compon
 			});
 		});
 
-		props.subscribeToThemeChange((theme: any) => {
+		props.subscribeToThemeChange((theme: ColorTheme) => {
 			this.setState({
 				currentColorTheme: theme
 			});
@@ -27,7 +28,7 @@ export class MenuBar<K extends MenuBarProps, L extends any> extends React.Compon
 	}
 
 	createStyle(): any {
-		const menuBarStyle: any = this.state.currentColorTheme.menuBar;
+		const menuBarStyle: MenuBarStyle = this.state.currentColorTheme.menuBar;
 		this.style = StyleSheet.create({
 			view: {
 				flexDirection: "row"
@@ -44,11 +45,13 @@ export class MenuBar<K extends MenuBarProps, L extends any> extends React.Compon
 			selectedButtonText: {
 				fontWeight: "bold",
 				alignSelf: "center",
-				margin: 10
+				margin: 10,
+				color: menuBarStyle.selectedButtonText.color
 			},
 			text: {
 				alignSelf: "center",
-				margin: 10
+				margin: 10,
+				color: menuBarStyle.text.color
 			}
 		});
 	}

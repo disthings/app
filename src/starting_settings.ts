@@ -20,7 +20,7 @@ export class StartingSettings {
 		dataRetentionInterval: 10000
 	};
 
-	readonly currentColor: string = "standard";
+	readonly currentTheme: string = "light";
 
 	constructor() {
 		if(StartingSettings.instance) {

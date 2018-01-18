@@ -1,4 +1,4 @@
-import {Color, PeripheralPartsContainer, PeripheralPartsDeclaration, ViewType} from "../types";
+import {ColorTheme, PeripheralPartsContainer, PeripheralPartsDeclaration, ViewType} from "../types";
 import {Peripheral} from "../model/peripheral";
 
 export interface iApp {
@@ -12,7 +12,7 @@ export interface iApp {
 	onReadyToRender(callback: Function): void;
 	setConnectingIP(ip: string): void;
 	managePeripheralDataBasedOnState(state: string): void;
-	getCurrentColorTheme(): Color;
+	getCurrentColorTheme(): ColorTheme;
 	getAllColorThemes(): Array<string>;
-	loadColorTheme(name: string): any;
+	loadColorTheme(name: string): ColorTheme;
 }

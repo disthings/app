@@ -1,4 +1,10 @@
-export const standard: any = {
+import {ColorTheme} from "../types";
+
+export const light: ColorTheme = {
+	name: "light",
+	viewContainer: {
+		backgroundColor: "#FFFFFF"
+	},
 	ipInputField: {
 		view: {
 			backgroundColor: "#FFFFFF",
@@ -18,6 +24,12 @@ export const standard: any = {
 		button: {
 			backgroundColor: "#A0FFEC",
 			borderColor: "#E6E7E2"
+		},
+		text: {
+			color: "#2B2B2B"
+		},
+		selectedButtonText: {
+			color: "#2B2B2B"
 		}
 	},
 	peripheralTile: {
@@ -27,12 +39,17 @@ export const standard: any = {
 			backgroundColorServer: "#AAFFA0"
 		},
 		title: {
-			borderColor: "#E6E7E2"
+			borderColor: "#E6E7E2",
+			color: "#2B2B2B"
 		}
 	}
 };
 
-export const dark: any = {
+export const dark: ColorTheme = {
+	name: "dark",
+	viewContainer: {
+		backgroundColor: "#000000"
+	},
 	ipInputField: {
 		view: {
 			backgroundColor: "#FFFFFF",
@@ -50,18 +67,25 @@ export const dark: any = {
 	},
 	menuBar: {
 		button: {
-			backgroundColor: "#ff0300",
-			borderColor: "#e70007"
+			backgroundColor: "#528278",
+			borderColor: "#9C9D9A"
+		},
+		text: {
+			color: "#D3D3D3"
+		},
+		selectedButtonText: {
+			color: "#D3D3D3"
 		}
 	},
 	peripheralTile: {
 		tile: {
-			borderColor: "#E6E7E2",
-			backgroundColorClient: "#ff0800",
-			backgroundColorServer: "#ff1300"
+			borderColor: "#9C9D9A",
+			backgroundColorClient: "#525A82",
+			backgroundColorServer: "#4F774B"
 		},
 		title: {
-			borderColor: "#E6E7E2"
+			borderColor: "#9C9D9A",
+			color: "#D3D3D3"
 		}
 	}
 };

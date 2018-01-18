@@ -7,7 +7,7 @@ import {iApp} from "../presenter/i_app";
 import {SettingsView} from "./settings_view";
 import {
 	PeripheralPartsContainer, ViewType, ViewContainerState, PeripheralViewClass, SingleArgumentCallback,
-	PeripheralPartsDeclaration
+	PeripheralPartsDeclaration, ColorTheme
 } from "../types";
 import {peripherals} from "../peripherals/peripherals_declaration";
 import {ReactNode} from "react";
@@ -30,18 +30,20 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		super(props, state);
 
 		this.publisher = new Publisher();
-
+		this.app = new App();
 		this.state = {
 			readyToRender: false,
 			hasIPAddress: false,
 			currentView: ViewType.MAIN,
-			windowDimensions: Dimensions.get("window")
+			windowDimensions: Dimensions.get("window"),
+			backgroundColor: "#FFFFFF"
 		};
-		this.app = new App();
+
 		this.app.onReadyToRender((host: string) => { // As soon as the app loaded and is ready to render, the view is informed.
 			this.setState({
 				readyToRender: true,
-				hasIPAddress: host.length > 0
+				hasIPAddress: host.length > 0,
+				backgroundColor: this.app.getCurrentColorTheme().viewContainer.backgroundColor
 			});
 		});
 
@@ -109,7 +111,11 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		this.publisher.unsubscribeFromEvent("onLayout", id);
 	}
 
-	onTheme(theme: any): void {
+	onTheme(theme: ColorTheme): void {
+		this.setState({
+			backgroundColor: theme.viewContainer.backgroundColor
+		});
+
 		this.publisher.informEventSubscribers("onTheme", theme);
 	}
 
@@ -153,7 +159,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 					allColorThemes={this.app.getAllColorThemes()}
 					currentThemeName={this.app.getCurrentColorTheme().name as string}
 					onThemeChosen={(themeName: string) => {
-						const colorTheme: any = this.app.loadColorTheme(themeName);
+						const colorTheme: ColorTheme = this.app.loadColorTheme(themeName);
 						this.onTheme(colorTheme);
 					}}
 				/>;
@@ -167,7 +173,10 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 											 onPressTile={(SomePeripheralView: PeripheralViewClass, peripheral: Peripheral) => {
 												 // it is important that SomePeripheralView is starting with a capital letter,
 												 // or else JSX won't recognize it.
-												 this.currentView = <SomePeripheralView peripheral={peripheral}/>;
+												 this.currentView = <SomePeripheralView
+													 peripheral={peripheral}
+													 currentThemeName={this.app.getCurrentColorTheme().name}
+												 />;
 												 this.showPeripheralView(peripheral);
 											 }}
 											 currentColorTheme={this.app.getCurrentColorTheme()}
@@ -182,7 +191,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 				this.createCurrentView();
 
 				return (
-					<View onLayout={this.onLayout.bind(this)}>
+					<View onLayout={this.onLayout.bind(this)} style={{backgroundColor: this.state.backgroundColor, height: "100%"}}>
 
 						<MenuBar onPressHomeButton={() => {this.showMainView();}}
 								 onPressSettingsButton={() => {this.showSettingsView();}}

@@ -3,7 +3,7 @@ import {iSyncManager} from "../model/i_synchronization_manager";
 import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
-import {Color, iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
+import {ColorTheme, iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage, ResponseDataPackage, Settings, ViewType
 } from "../types";
@@ -60,7 +60,8 @@ export class App implements iApp {
 				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.resetSettings(errorCallback);
 			}
-			this.colorThemeManager = new ColorThemeManager(this.settings.currentColor);
+			this.colorThemeManager = new ColorThemeManager();
+			this.colorThemeManager.loadColorTheme(this.settings.currentTheme);
 			this.maxSkippedIntervals = this.settings.maxSkippedIntervals;
 			this.dataRequestInterval = this.settings.dataRequestInterval;
 			this.didSettingsLoad = true;
@@ -469,7 +470,7 @@ export class App implements iApp {
 		});
 	}
 
-	getCurrentColorTheme(): Color {
+	getCurrentColorTheme(): ColorTheme {
 		return this.colorThemeManager.getCurrentColorTheme();
 	}
 
@@ -477,7 +478,19 @@ export class App implements iApp {
 		return this.colorThemeManager.getAllColorThemes();
 	}
 
-	loadColorTheme(name: string): any {
-		return this.colorThemeManager.loadColorTheme(name);
+	loadColorTheme(name: string): ColorTheme {
+		let newTheme: ColorTheme = this.colorThemeManager.loadColorTheme(name);
+		this.saveColorThemeSetting(newTheme.name);
+		return newTheme;
+	}
+
+	private saveColorThemeSetting(name: string): void {
+		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
+			const currentSettings: Settings = result;
+			currentSettings.currentTheme = name;
+			SettingsManager.setRuntimeSettings(currentSettings, () => {
+				this.settings = currentSettings;
+			});
+		});
 	}
 }
