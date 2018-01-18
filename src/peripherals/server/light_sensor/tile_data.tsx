@@ -1,6 +1,6 @@
 import * as React from "react";
 import {PeripheralTileData} from "../../../view/peripheral_tile_data";
-import {Text, View} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import {PeripheralTileDataState} from "../../../types";
 
 export class LightSensorTileData extends PeripheralTileData<any, PeripheralTileDataState> {
@@ -16,9 +16,13 @@ export class LightSensorTileData extends PeripheralTileData<any, PeripheralTileD
 	render(): React.ReactNode {
 
 		let value: number = this.state.data.length > 0 ? this.state.data[this.state.data.length - 1].data : 0;
-
+		const colors: any = StyleSheet.create({
+			textColor: {
+				color: this.state.currentThemeName === "light" ? "#2B2B2B" : "#D3D3D3"
+			}
+		});
 		return (<View>
-				<Text>Level (%): {value}</Text>
+				<Text style={colors.textColor}>Level (%): {value}</Text>
 			</View>);
 	}
 }

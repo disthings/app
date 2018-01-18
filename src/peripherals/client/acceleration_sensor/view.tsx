@@ -1,5 +1,5 @@
 import * as React from "react";
-import {View, Text} from "react-native";
+import {View, Text, StyleSheet} from "react-native";
 import {PeripheralView} from "../../../view/peripheral_view";
 import {PeripheralViewProps, PeripheralViewState} from "../../../types";
 
@@ -16,8 +16,13 @@ export class AccelerationSensorView extends PeripheralView<PeripheralViewProps, 
 
 	render(): React.ReactNode {
 		let value: string = this.state.data ? JSON.stringify(this.state.data, null, "\t") : "No available data";
+		const colors: any = StyleSheet.create({
+			textColor: {
+				color: this.state.currentThemeName === "light" ? "#2B2B2B" : "#D3D3D3"
+			}
+		});
 		return (<View>
-			<Text>Data: {value}</Text>
+			<Text style={colors.textColor}>Data: {value}</Text>
 		</View>);
 	}
 }
