@@ -30,7 +30,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 		super(props, state);
 
 		this.publisher = new Publisher();
-		this.app = new App();
+
 		this.state = {
 			readyToRender: false,
 			hasIPAddress: false,
@@ -38,11 +38,10 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 			windowDimensions: Dimensions.get("window"),
 			backgroundColor: "#FFFFFF"
 		};
-
-		this.app.onReadyToRender((host: string) => { // As soon as the app loaded and is ready to render, the view is informed.
+		this.app = new App((isValidIPv4: boolean) => { // As soon as the app loaded and is ready to render, the view is informed.
 			this.setState({
 				readyToRender: true,
-				hasIPAddress: host.length > 0,
+				hasIPAddress: isValidIPv4,
 				backgroundColor: this.app.getCurrentColorTheme().viewContainer.backgroundColor
 			});
 		});

@@ -9,7 +9,6 @@ export interface iApp {
 	setCurrentViewType(screenType: ViewType): void;
 	getCurrentViewType(): ViewType;
 	setCurrentPeripheral(peripheral: Peripheral): void;
-	onReadyToRender(callback: Function): void;
 	setConnectingIP(ip: string): void;
 	managePeripheralDataBasedOnState(state: string): void;
 	getCurrentColorTheme(): ColorTheme;

@@ -11,9 +11,9 @@ and reconnects automatically.
 export class SyncManager implements iSyncManager {
 
 	private publisher: Publisher;
-	private webSocket: WebSocket;
-	private webSocketAddress: string;
-	private webSocketReconnectionInterval: number;
+	private webSocket!: WebSocket;
+	private webSocketAddress!: string;
+	private webSocketReconnectionInterval!: number;
 	private settings: any;
 
 	constructor() {

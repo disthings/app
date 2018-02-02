@@ -3,7 +3,9 @@ import {iSyncManager} from "../model/i_synchronization_manager";
 import {SyncManager} from "../model/synchronization_manager";
 import {iDataManager} from "../model/i_data_manager";
 import {DataManager} from "../model/data_manager";
-import {ColorTheme, iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure} from "../types";
+import {
+	ColorTheme, iPeripheralInternal, Message, PeripheralPartsDeclaration, UserDataStructure
+} from "../types";
 import {
 	PeripheralPartsContainer, PeripheralType, RequestDataPackage, ResponseDataPackage, Settings, ViewType
 } from "../types";
@@ -14,7 +16,7 @@ import {DefaultValues} from "../defaults/default_values";
 import {Peripheral} from "../model/peripheral";
 import {SettingsManager} from "../model/settings_manager";
 import {StartingSettings} from "../starting_settings";
-import {errorCallback, forEachAsync} from "../generic_functions";
+import {errorCallback, forEachAsync, isValidIPv4} from "../generic_functions";
 import {ColorThemeManager} from "./color_theme_manager";
 
 /*
@@ -23,28 +25,25 @@ the synchronization, as well as sending the data to memory or the database.
  */
 export class App implements iApp {
 
-	private syncManager: iSyncManager;
+	private syncManager!: iSyncManager;
 	private dataManager: iDataManager;
-	private colorThemeManager: ColorThemeManager;
+	private colorThemeManager!: ColorThemeManager;
 	private currentViewType: ViewType;
 	private currentPeripheral: Peripheral;
 	private isWaiting: boolean;
 	private isSocketReady: boolean;
 	private didSettingsLoad: boolean;
 	private tryCounter: number = 0;
-	private loopID: Timer;
-	private maxSkippedIntervals: number;
-	private dataRequestInterval: number;
+	private loopID!: Timer;
 	private subscriberID: string;
 	private settings: StartingSettings;
-	private onReadyToRenderCallback: Function;
 
-	constructor() {
+	constructor(onReadyToRender: (isValidIPv4: boolean) => void) {
 
 		this.isWaiting = true;
 		this.isSocketReady = false;
 		this.didSettingsLoad = false;
-
+		this.settings = SettingsManager.getStartingSettings();
 		this.currentViewType = ViewType.MAIN;
 		this.currentPeripheral = DefaultValues.EMPTY_PERIPHERAL;
 		this.subscriberID = "APP";
@@ -57,18 +56,12 @@ export class App implements iApp {
 				this.settings = result;
 			}
 			else { // get the initial settings
-				this.settings = SettingsManager.getStartingSettings();
 				SettingsManager.resetSettings(errorCallback);
 			}
-			this.colorThemeManager = new ColorThemeManager();
-			this.colorThemeManager.loadColorTheme(this.settings.currentTheme);
-			this.maxSkippedIntervals = this.settings.maxSkippedIntervals;
-			this.dataRequestInterval = this.settings.dataRequestInterval;
+			this.colorThemeManager = new ColorThemeManager(this.settings.currentTheme);
 			this.didSettingsLoad = true;
 
-			if(this.onReadyToRenderCallback) {
-				this.onReadyToRenderCallback(this.settings.webSocket.host);
-			}
+			onReadyToRender(isValidIPv4(this.settings.webSocket.host));
 
 			if(this.settings.webSocket.host) {
 				this.activateSynchronization();
@@ -105,7 +98,7 @@ export class App implements iApp {
 		this.decideViewAction();
 		this.loopID = setInterval(() => {
 			this.decideViewAction();
-		}, this.dataRequestInterval);
+		}, this.settings.dataRequestInterval);
 	}
 
 	private deactivateInterval(): void {
@@ -141,7 +134,7 @@ export class App implements iApp {
 		}
 
 		// after some time stop waiting to enable a retry
-		if(this.tryCounter === this.maxSkippedIntervals && this.isSocketReady) {
+		if(this.tryCounter === this.settings.maxSkippedIntervals && this.isSocketReady) {
 			this.stopWaitingForServer();
 			this.tryCounter = 0;
 		}
@@ -157,10 +150,6 @@ export class App implements iApp {
 
 	private isReadyForInterval(): boolean {
 		return this.isSocketReady && !this.isWaiting && this.didSettingsLoad;
-	}
-
-	onReadyToRender(callback: Function): void {
-		this.onReadyToRenderCallback = callback;
 	}
 
 	private addClientPeripheral(peripheralPartsContainer: PeripheralPartsContainer): void {

@@ -2,7 +2,6 @@ import {iSQLiteDatabase} from "./i_sqlite_database";
 import {SQLiteInstance} from "../js_to_typescript_adapters/react-native-sqlite-2";
 import {ErrorCallback, TransactionCallback} from "../types";
 import {Transaction} from "./transaction";
-import {iTransaction} from "./i_transaction";
 
 /*
 A wrapper class for the react-native-sqlite-2 module.
@@ -23,9 +22,7 @@ export class SQLiteDatabase implements iSQLiteDatabase {
 	}
 
 	transaction(callback: TransactionCallback, errorCallback: ErrorCallback): void {
-		const transaction: iTransaction = new Transaction(this.sqLiteDb);
-		transaction.onTransactionStart(callback);
-		transaction.onTransactionError(errorCallback);
+		new Transaction(this.sqLiteDb, callback, errorCallback);
 	}
 
 	getName(): string {

@@ -14,7 +14,8 @@
 	"removeComments": true,
 	"strictNullChecks": true,
 	"allowJs": true,
-	"skipLibCheck": true
+	"skipLibCheck": true,
+	"strictPropertyInitialization": true
   },
   "include": [
 	"./src"

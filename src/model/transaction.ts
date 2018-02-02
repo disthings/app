@@ -1,4 +1,3 @@
-import {ErrorCallback} from "../types";
 import {iTransaction} from "./i_transaction";
 
 
@@ -11,16 +10,14 @@ export class Transaction implements iTransaction {
 
 	private sqLiteDb: any;
 	private transaction: any;
-	private onTransactionStartCallback: Function;
-	private onTransactionErrorCallback: Function;
 
-	constructor(sqLiteDb: any) {
+	constructor(sqLiteDb: any, onStartCallback: Function, onErrorCallback: Function) {
 
 		this.sqLiteDb = sqLiteDb;
 		this.sqLiteDb.transaction((transaction: any) => {
 			this.transaction = transaction;
-			this.onTransactionStartCallback(this);
-		}, this.onTransactionErrorCallback);
+			onStartCallback(this);
+		}, onErrorCallback);
 	}
 
 	executeSql(sqlStatement: string, args: Array<any>, callback: Function): void {
@@ -36,13 +33,5 @@ export class Transaction implements iTransaction {
 				console.error(error);
 			}
 		});
-	}
-
-	onTransactionStart(callback: Function): void {
-		this.onTransactionStartCallback = callback;
-	}
-
-	onTransactionError(errorCallback: ErrorCallback): void {
-		this.onTransactionErrorCallback = errorCallback;
 	}
 }
