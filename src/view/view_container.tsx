@@ -39,7 +39,7 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 			backgroundColor: "#FFFFFF"
 		};
 		this.app = new App((isValidIPv4: boolean) => { // As soon as the app loaded and is ready to render, the view is informed.
-			
+
 			this.setState({
 				readyToRender: true,
 				hasIPAddress: isValidIPv4,
