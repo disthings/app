@@ -52,6 +52,7 @@ export class App implements iApp {
 
 
 		SettingsManager.getRuntimeSettings((_error: Error, result: StartingSettings) => {
+
 			if(result) { // if there are already saved settings
 				this.settings = result;
 			}
@@ -414,10 +415,9 @@ export class App implements iApp {
 	}
 
 	setConnectingIP(ip: string): void {
-		const host: string = "ws://" + ip;
 		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
 			const currentSettings: Settings = result;
-			currentSettings.webSocket.host = host;
+			currentSettings.webSocket.host = ip;
 			SettingsManager.setRuntimeSettings(currentSettings, () => {
 				this.settings = currentSettings;
 				this.activateSynchronization();

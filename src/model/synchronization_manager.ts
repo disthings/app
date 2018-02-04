@@ -23,7 +23,7 @@ export class SyncManager implements iSyncManager {
 		// get the settings and try to connect
 		SettingsManager.getRuntimeSettings((_error: Error, result: Settings) => {
 			this.settings = result.webSocket;
-			this.webSocketAddress = this.settings.host + ":" + this.settings.port + this.settings.path;
+			this.webSocketAddress = "ws://" + this.settings.host + ":" + this.settings.port + this.settings.path;
 			this.webSocketReconnectionInterval = this.settings.reconnectionInterval;
 			this.tryToConnect();
 		});
