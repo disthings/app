@@ -42,6 +42,14 @@ export const light: ColorTheme = {
 			borderColor: "#E6E7E2",
 			color: "#2B2B2B"
 		}
+	},
+	settingsView: {
+		title: {
+			color: "#000000"
+		},
+		picker: {
+			color: "#000000"
+		}
 	}
 };
 
@@ -86,6 +94,14 @@ export const dark: ColorTheme = {
 		title: {
 			borderColor: "#9C9D9A",
 			color: "#D3D3D3"
+		}
+	},
+	settingsView: {
+		title: {
+			color: "#FFFFFF"
+		},
+		picker: {
+			color: "#FFFFFF"
 		}
 	}
 };

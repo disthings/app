@@ -4,7 +4,7 @@ import {App} from "../presenter/app";
 import {MenuBar} from "./menu_bar";
 import {MainView} from "./main_view";
 import {iApp} from "../presenter/i_app";
-import {SettingsView} from "./settings_view";
+import {SettingsView} from "./settings/settings_view";
 import {
 	PeripheralPartsContainer, ViewType, ViewContainerState, PeripheralViewClass, SingleArgumentCallback,
 	PeripheralPartsDeclaration, ColorTheme
@@ -157,11 +157,13 @@ export class ViewContainer<K extends any, L extends ViewContainerState> extends 
 			case ViewType.SETTINGS:
 				this.currentView = <SettingsView
 					allColorThemes={this.app.getAllColorThemes()}
-					currentThemeName={this.app.getCurrentColorTheme().name as string}
+					currentColorTheme={this.app.getCurrentColorTheme()}
 					onThemeChosen={(themeName: string) => {
 						const colorTheme: ColorTheme = this.app.loadColorTheme(themeName);
 						this.onTheme(colorTheme);
 					}}
+					subscribeToThemeChange={this.subscribeToThemeChange.bind(this)}
+					unsubscribeFromThemeChange={this.unsubscribeFromThemeChange.bind(this)}
 				/>;
 				break;
 			case ViewType.MAIN:

@@ -216,12 +216,29 @@ export interface IPInputFieldState {
 
 export interface SettingsViewProps {
 	allColorThemes: Array<string>;
-	currentThemeName: string;
+	currentColorTheme: ColorTheme;
 	onThemeChosen: Function;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
 }
 
 export interface SettingsViewState {
 	allColorThemes: Array<string>;
+	currentColorTheme: ColorTheme;
+	currentThemeName: string;
+}
+
+export interface ThemePickerProps {
+	allColorThemes: Array<string>;
+	currentColorTheme: ColorTheme;
+	subscribeToThemeChange: (callback: SingleArgumentCallback, id: string) => void;
+	unsubscribeFromThemeChange: (id: string) => void;
+	onThemeChosen: Function;
+}
+
+export interface ThemePickerState {
+	allColorThemes: Array<string>;
+	currentColorTheme: ColorTheme;
 	currentThemeName: string;
 }
 
@@ -231,6 +248,7 @@ export interface ColorTheme {
 	ipInputField: IPInputFieldStyle;
 	menuBar: MenuBarStyle;
 	peripheralTile: PeripheralTileStyle;
+	settingsView: SettingsViewStyle;
 }
 
 export interface ViewContainerStyle {
@@ -239,41 +257,50 @@ export interface ViewContainerStyle {
 
 export interface IPInputFieldStyle {
 	view: {
-		backgroundColor: string,
-		borderColor: string
+		backgroundColor: string;
+		borderColor: string;
 	};
 	button: {
-		borderColor: string
+		borderColor: string;
 	};
 	okButton: {
-		backgroundColor: string
+		backgroundColor: string;
 	};
 	cancelButton: {
-		backgroundColor: string
+		backgroundColor: string;
 	};
 }
 
 export interface MenuBarStyle {
 	button: {
-		backgroundColor: string,
-		borderColor: string
+		backgroundColor: string;
+		borderColor: string;
 	};
 	selectedButtonText: {
-		color: string
+		color: string;
 	};
 	text: {
-		color: string
+		color: string;
 	};
 }
 
 export interface PeripheralTileStyle {
 	tile: {
-		borderColor: string,
-		backgroundColorClient: string,
-		backgroundColorServer: string
+		borderColor: string;
+		backgroundColorClient: string;
+		backgroundColorServer: string;
 	};
 	title: {
-		borderColor: string,
-		color: string
+		borderColor: string;
+		color: string;
+	};
+}
+
+export interface SettingsViewStyle {
+	title: {
+		color: string;
+	};
+	picker: {
+		color: string;
 	};
 }
